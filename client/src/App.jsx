@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import ProfileHeader from './components/ProfileHeader';
 import ProfileInfo from './components/ProfileInfo';
+import HomeAboutSection from './components/HomeAboutSection';
 import ProjectsSection from './components/ProjectsSection';
 import HobbiesSection from './components/HobbiesSection';
 import AboutSection from './components/AboutSection';
@@ -31,8 +32,11 @@ export default function App() {
             {/* Avatar + YouTube Banner directly under avatar */}
             <ProfileHeader />
 
-            {/* Profile Info, Social Links, and Replaced Stats (Project Made & Happy Coding) */}
+            {/* Profile Info, Social Links, and Stats */}
             <ProfileInfo />
+
+            {/* Home About Section */}
+            <HomeAboutSection />
 
             {/* Featured Projects Showcase */}
             <ProjectsSection />

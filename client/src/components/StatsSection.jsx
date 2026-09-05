@@ -7,7 +7,7 @@ export default function StatsSection() {
   const { isDark } = useTheme();
 
   return (
-    <div className="grid grid-cols-3 gap-3 pt-2 font-mono-code">
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pt-2 font-mono-code">
       {/* Project Made Stat */}
       <div className={`p-3 sm:p-4 transition-all duration-300 flex items-center space-x-3 ${
         isDark 
