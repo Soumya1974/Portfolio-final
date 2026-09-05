@@ -78,7 +78,7 @@ export default function StatsSection() {
           <span className={`text-sm sm:text-base font-bold ${
             isDark ? 'text-white' : 'text-black'
           }`}>
-            150+ Commits
+            201+ Commits
           </span>
         </div>
       </div>
