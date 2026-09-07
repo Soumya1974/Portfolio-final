@@ -28,7 +28,7 @@ export default function StatsSection() {
           <span className={`text-sm sm:text-base font-bold ${
             isDark ? 'text-white' : 'text-black'
           }`}>
-            6+ apps
+            6+ Web
           </span>
         </div>
       </div>
