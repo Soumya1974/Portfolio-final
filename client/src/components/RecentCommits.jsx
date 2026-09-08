@@ -157,28 +157,36 @@ export default function RecentCommits() {
           </p>
         ) : (
           <div 
-            className="max-h-[300px] overflow-y-auto pr-2 transition-colors duration-300"
+            className="max-h-[320px] overflow-y-auto pr-2 pl-1 transition-colors duration-300"
             style={{
               scrollbarWidth: 'thin',
               scrollbarColor: isDark ? '#3f3f46 transparent' : '#d4d4d8 transparent'
             }}
           >
-            <div 
-              className="relative border-l-2 ml-2 sm:ml-3 space-y-4 transition-colors duration-300 py-1"
-              style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}
-            >
+            <div className="relative space-y-1.5 py-1">
               {commits.map((item, idx) => (
-                <div key={idx} className="relative pl-5 group">
-                  {/* Timeline Dot */}
-                  <div className={`absolute -left-[7px] top-2 w-3 h-3 rounded-full transition-all duration-200 ${
-                    isDark 
-                      ? 'bg-emerald-500 ring-4 ring-zinc-950 group-hover:scale-125 group-hover:bg-emerald-400' 
-                      : 'bg-emerald-600 ring-4 ring-white group-hover:scale-125 group-hover:bg-emerald-500'
-                  }`} />
+                <div key={idx} className="relative pl-6 group">
+                  {/* L-shaped Reddit reply branch line */}
+                  <div 
+                    className={`absolute left-1 top-0 w-4 h-4 border-l-2 border-b-2 rounded-bl-lg transition-colors duration-200 ${
+                      isDark 
+                        ? 'border-zinc-800 group-hover:border-emerald-500/80' 
+                        : 'border-zinc-300 group-hover:border-emerald-600/80'
+                    }`}
+                  />
+                  
+                  {/* Vertical line continuing down for non-last items */}
+                  {idx !== commits.length - 1 && (
+                    <div 
+                      className={`absolute left-1 top-4 bottom-0 border-l-2 transition-colors duration-200 ${
+                        isDark ? 'border-zinc-800' : 'border-zinc-300'
+                      }`}
+                    />
+                  )}
 
                   {/* Timeline Item Content - Borderless */}
                   <div className={`p-2.5 rounded-lg transition-colors duration-200 ${
-                    isDark ? 'hover:bg-zinc-900/40' : 'hover:bg-zinc-100/60'
+                    isDark ? 'hover:bg-zinc-900/50' : 'hover:bg-zinc-100/70'
                   }`}>
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
                       <p className={`text-xs sm:text-sm font-medium transition-colors duration-200 ${
