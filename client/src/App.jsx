@@ -12,6 +12,7 @@ import Footer from './components/Footer';
 import TechStackPage from './components/TechStackPage';
 import { useTheme } from './ThemeContext';
 import GithubActivity from './components/GithubActivity';
+import RecentCommits from './components/RecentCommits';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -45,6 +46,9 @@ export default function App() {
             <TechStackPage />
 
             <GithubActivity />
+
+            {/* Live Pushed GitHub Commits */}
+            <RecentCommits />
 
             {/* Stay Connected section directly after TechStackPage */}
             <ConnectSection setActiveTab={setActiveTab} />
