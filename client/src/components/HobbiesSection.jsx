@@ -17,16 +17,14 @@ export default function HobbiesSection() {
       </div>
 
       {/* 3D Modeling & Animation Section */}
-      <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div>
-            <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
-              3D Modeling & Animation (Blender)
-            </h2>
-            <span className={`text-xs ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-              Modeling, Rigging, Environments, Minecraft Animation
-            </span>
-          </div>
+      <div className="space-y-4 pt-2">
+        <div>
+          <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
+            3D Modeling & Animation (Blender)
+          </h2>
+          <span className={`text-xs ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+            Modeling, Rigging, Environments, Minecraft Animation
+          </span>
         </div>
 
         <p className={`text-base leading-relaxed ${
@@ -34,6 +32,52 @@ export default function HobbiesSection() {
         }`}>
           My Blender journey started with curiosity and gradually grew into a passion for 3D modeling and animation. I’ve been learning through experimentation, working with modeling, rigging, environments, and character animation, while spending a lot of time creating Minecraft animations and improving my workflow with every project.
         </p>
+
+        {/* Bento Grid: Some renders */}
+        <div className="pt-2 space-y-3">
+          <h3 className={`text-sm font-semibold tracking-wide ${isDark ? 'text-zinc-300' : 'text-zinc-800'}`}>
+            Some renders
+          </h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {/* Bento Main Hero Render */}
+            <div className="md:col-span-2 group relative overflow-hidden rounded-xl h-56 sm:h-64 shadow-xs">
+              <img 
+                src="/renders/render1.png" 
+                alt="Minecraft Blender Render - Steve Selfie" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
+                <span className="text-white text-xs font-mono-code font-medium">Minecraft Environment & Character Render</span>
+              </div>
+            </div>
+
+            {/* Bento Stacked Secondary Renders */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3">
+              <div className="group relative overflow-hidden rounded-xl h-36 sm:h-30 md:h-[7.75rem] shadow-xs">
+                <img 
+                  src="/renders/render2.png" 
+                  alt="Minecraft Blender Render - Steve Low Angle" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
+                  <span className="text-white text-[11px] font-mono-code">Low Angle Character Pose</span>
+                </div>
+              </div>
+
+              <div className="group relative overflow-hidden rounded-xl h-36 sm:h-30 md:h-[7.75rem] shadow-xs">
+                <img 
+                  src="/renders/render3.png" 
+                  alt="Minecraft Blender Render - Hobbit House Entrance" 
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
+                  <span className="text-white text-[11px] font-mono-code">Detailed Environment Design</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Hardware & Gear Section */}
