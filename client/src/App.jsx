@@ -11,6 +11,7 @@ import ConnectSection from './components/ConnectSection';
 import Footer from './components/Footer';
 import TechStackPage from './components/TechStackPage';
 import { useTheme } from './ThemeContext';
+import GithubActivity from './components/GithubActivity';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
@@ -42,6 +43,8 @@ export default function App() {
             <ProjectsSection />
 
             <TechStackPage />
+
+            <GithubActivity />
 
             {/* Stay Connected section directly after TechStackPage */}
             <ConnectSection setActiveTab={setActiveTab} />
