@@ -27,7 +27,7 @@ export default function ProfileHeader() {
         {/* Status indicator */}
         <span 
           className={`absolute bottom-1 right-2 w-4 h-4 rounded-full border-2 shadow-xs transition-colors duration-300 ${
-            isDark ? 'bg-zinc-400 border-black' : 'bg-gray-300 border-white'
+            isDark ? 'bg-zinc-400 border-black' : 'bg-green-200 border-white'
           }`} 
           title="Online / Available"
         ></span>
