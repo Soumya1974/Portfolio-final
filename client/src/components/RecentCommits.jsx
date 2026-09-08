@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { GitCommit, ExternalLink, RefreshCw, GitBranch, Terminal } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
 
@@ -12,12 +13,9 @@ export default function RecentCommits() {
     setLoading(true);
     setError(null);
     try {
-      // Fetch public events for user Soumya1974 via native fetch API
-      const response = await fetch('https://api.github.com/users/Soumya1974/events/public');
-      if (!response.ok) {
-        throw new Error(`GitHub API returned status ${response.status}`);
-      }
-      const data = await response.json();
+      // Fetch public events for user Soumya1974 via axios
+      const response = await axios.get('https://api.github.com/users/Soumya1974/events/public');
+      const data = response.data;
       
       // Filter for PushEvent events which contain actual pushed commits
       const pushEvents = data.filter(event => event.type === 'PushEvent');
