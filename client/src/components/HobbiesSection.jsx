@@ -48,7 +48,7 @@ export default function HobbiesSection() {
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-3">
-                <span className="text-white text-xs font-mono-code font-medium">Minecraft Environment & Character Render</span>
+                <span className="text-white text-xs font-medium">Steve takin a selfie</span>
               </div>
             </div>
 
@@ -61,7 +61,7 @@ export default function HobbiesSection() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
-                  <span className="text-white text-[11px] font-mono-code">Low Angle Character Pose</span>
+                  <span className="text-white text-[11px] ">Low Angle zoom Steve</span>
                 </div>
               </div>
 
@@ -72,7 +72,7 @@ export default function HobbiesSection() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-2.5">
-                  <span className="text-white text-[11px] font-mono-code">Detailed Environment Design</span>
+                  <span className="text-white text-[11px]">The hobbit house</span>
                 </div>
               </div>
             </div>

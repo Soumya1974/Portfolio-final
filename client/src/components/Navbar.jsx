@@ -35,7 +35,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
           </button>
         </div>
 
-        {/* Right side: Desktop Nav + Text Theme Toggle */}
+        {/* Right side: Desktop Nav + Theme Toggle */}
         <div className="flex items-center space-x-5 sm:space-x-8">
           {/* Desktop Navigation Links */}
           <nav className={`hidden sm:flex items-center space-x-6 sm:space-x-8 font-mono-code text-sm ${
@@ -58,10 +58,10 @@ export default function Navbar({ activeTab, setActiveTab }) {
             ))}
           </nav>
 
-          {/* Text-Only Theme Toggle Button */}
+          {/* Desktop Text-Only Theme Toggle Button (Hidden on Mobile) */}
           <button
             onClick={toggleTheme}
-            className={`font-mono-code text-xs px-2.5 py-1 transition-all cursor-pointer font-medium ${
+            className={`hidden sm:inline-block font-mono-code text-xs px-2.5 py-1 transition-all cursor-pointer font-medium ${
               isDark
                 ? 'text-zinc-400 hover:text-white'
                 : 'text-zinc-500 hover:text-black'
@@ -86,24 +86,47 @@ export default function Navbar({ activeTab, setActiveTab }) {
         </div>
       </div>
 
-      {/* Mobile Navigation Dropdown Drawer */}
+      {/* Mobile Navigation Dropdown Drawer (Positions on top of Hero Section) */}
       {mobileMenuOpen && (
-        <div className={`sm:hidden border-b backdrop-blur-md px-4 py-3 font-mono-code text-sm space-y-1.5 animate-fadeIn ${
-          isDark ? 'border-zinc-800 bg-black/95' : 'border-zinc-200 bg-white/95'
+        <div className={`sm:hidden absolute top-full left-0 right-0 z-50 border-b backdrop-blur-xl px-4 py-3.5 font-mono-code text-sm space-y-2 shadow-2xl animate-fadeIn ${
+          isDark ? 'border-zinc-800 bg-black/95 text-zinc-300' : 'border-zinc-200 bg-white/95 text-zinc-700'
         }`}>
           {navItems.map((item) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className={`w-full text-left py-2 px-3 rounded-md transition-colors cursor-pointer ${
+              className={`w-full text-left py-2.5 px-3.5 rounded-lg transition-colors cursor-pointer ${
                 activeTab === item.id
-                  ? (isDark ? 'bg-white text-black font-medium' : 'bg-zinc-900 text-white font-medium')
+                  ? (isDark ? 'bg-white text-black font-semibold' : 'bg-zinc-900 text-white font-semibold')
                   : (isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-black')
               }`}
             >
               {item.label}
             </button>
           ))}
+
+          {/* Theme Toggle Button inside Hamburger Menu for Mobile */}
+          <div className="pt-2 border-t mt-2" style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}>
+            <button
+              onClick={() => {
+                toggleTheme();
+              }}
+              className={`w-full flex items-center justify-between py-2.5 px-3.5 rounded-lg transition-colors cursor-pointer ${
+                isDark 
+                  ? 'text-zinc-400 hover:bg-zinc-900 hover:text-white' 
+                  : 'text-zinc-600 hover:bg-zinc-100 hover:text-black'
+              }`}
+            >
+              <span>theme</span>
+              <span className={`text-xs px-2.5 py-1 rounded border font-mono-code ${
+                isDark 
+                  ? 'bg-zinc-900 border-zinc-800 text-white' 
+                  : 'bg-zinc-100 border-zinc-200 text-black'
+              }`}>
+                {isDark ? 'light' : 'dark'}
+              </span>
+            </button>
+          </div>
         </div>
       )}
     </header>
