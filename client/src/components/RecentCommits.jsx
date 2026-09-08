@@ -96,12 +96,13 @@ export default function RecentCommits() {
   };
 
   return (
-    <section className={`pt-6 pb-6 border-t transition-colors duration-300 ${
-      isDark ? 'border-zinc-900' : 'border-zinc-100'
+    <section className={`pt-6 pb-8 transition-colors duration-300 ${
+      isDark ? 'border-t border-zinc-900' : 'border-t border-zinc-200'
     }`}>
-      <div className="flex items-center justify-between mb-4">
+      {/* Section Header */}
+      <div className="flex items-center justify-between mb-6">
         <h2 className={`text-xl font-bold tracking-tight flex items-center gap-2 transition-colors duration-300 ${
-          isDark ? 'text-white' : 'text-black'
+          isDark ? 'text-white' : 'text-zinc-900'
         }`}>
           <GitCommit className="w-5 h-5 text-emerald-500" />
           <span>Recent Pushed Commits</span>
@@ -110,40 +111,40 @@ export default function RecentCommits() {
         <button
           onClick={fetchGithubCommits}
           disabled={loading}
-          className={`p-1.5 rounded-lg border transition-all duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-mono-code ${
+          className={`px-2.5 py-1 rounded-md transition-all duration-200 cursor-pointer flex items-center gap-1.5 text-xs font-mono-code ${
             isDark 
-              ? 'bg-zinc-900 text-zinc-400 border-zinc-800 hover:text-white hover:border-zinc-700' 
-              : 'bg-zinc-100 text-zinc-600 border-zinc-200 hover:text-black hover:border-zinc-300'
+              ? 'text-zinc-400 hover:text-white hover:bg-zinc-900' 
+              : 'text-zinc-600 hover:text-black hover:bg-zinc-100'
           }`}
-          title="Refresh commits"
+          title="Refresh activity"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span className="hidden sm:inline">Sync</span>
         </button>
       </div>
 
-      <div className={`p-4 sm:p-5 rounded-xl border transition-colors duration-300 ${
-        isDark ? 'border-zinc-900 bg-zinc-950/80 text-zinc-300' : 'border-zinc-200 bg-white text-zinc-700'
-      }`}>
+      {/* Timeline Container */}
+      <div className="relative pl-1 sm:pl-2">
         {loading ? (
-          <div className="space-y-3 py-2">
+          <div className="space-y-6 py-2 pl-4">
             {[1, 2, 3].map(i => (
-              <div key={i} className={`p-3 rounded-lg border animate-pulse space-y-2 ${
-                isDark ? 'border-zinc-900 bg-zinc-900/40' : 'border-zinc-100 bg-zinc-50'
-              }`}>
-                <div className={`h-4 w-3/4 rounded ${isDark ? 'bg-zinc-800' : 'bg-zinc-200'}`} />
-                <div className={`h-3 w-1/2 rounded ${isDark ? 'bg-zinc-800/60' : 'bg-zinc-200/60'}`} />
+              <div key={i} className="flex gap-4 animate-pulse">
+                <div className={`w-3 h-3 rounded-full mt-1.5 ${isDark ? 'bg-zinc-800' : 'bg-zinc-300'}`} />
+                <div className="space-y-2 flex-1">
+                  <div className={`h-4 w-2/3 rounded ${isDark ? 'bg-zinc-800/80' : 'bg-zinc-200'}`} />
+                  <div className={`h-3 w-1/3 rounded ${isDark ? 'bg-zinc-800/50' : 'bg-zinc-200/60'}`} />
+                </div>
               </div>
             ))}
           </div>
         ) : error ? (
-          <div className={`p-4 rounded-lg text-xs font-mono-code text-center space-y-2 ${
-            isDark ? 'bg-zinc-900/50 text-zinc-400' : 'bg-zinc-100 text-zinc-600'
+          <div className={`py-4 text-xs font-mono-code text-center ${
+            isDark ? 'text-zinc-400' : 'text-zinc-600'
           }`}>
             <p>{error}</p>
             <button 
               onClick={fetchGithubCommits}
-              className="text-emerald-500 hover:underline font-semibold"
+              className="mt-2 text-emerald-500 hover:underline font-semibold"
             >
               Try Again
             </button>
@@ -155,53 +156,59 @@ export default function RecentCommits() {
             No recent public push events found.
           </p>
         ) : (
-          <div className="space-y-2.5">
+          <div 
+            className="relative border-l-2 ml-2 sm:ml-3 space-y-5 transition-colors duration-300"
+            style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}
+          >
             {commits.map((item, idx) => (
-              <div
-                key={idx}
-                className={`p-3 rounded-lg border transition-all duration-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 group ${
+              <div key={idx} className="relative pl-5 group">
+                {/* Timeline Dot */}
+                <div className={`absolute -left-[7px] top-2 w-3 h-3 rounded-full transition-all duration-200 ${
                   isDark 
-                    ? 'border-zinc-900/80 bg-zinc-900/30 hover:border-zinc-800 hover:bg-zinc-900/60' 
-                    : 'border-zinc-200/70 bg-zinc-50/60 hover:border-zinc-300 hover:bg-zinc-100/80'
-                }`}
-              >
-                <div className="flex items-start gap-2.5 min-w-0">
-                  <GitBranch className={`w-4 h-4 mt-0.5 flex-shrink-0 transition-colors ${
-                    isDark ? 'text-emerald-400' : 'text-emerald-600'
-                  }`} />
-                  <div className="min-w-0">
-                    <p className={`text-xs sm:text-sm font-semibold truncate transition-colors ${
+                    ? 'bg-emerald-500 ring-4 ring-zinc-950 group-hover:scale-125 group-hover:bg-emerald-400' 
+                    : 'bg-emerald-600 ring-4 ring-white group-hover:scale-125 group-hover:bg-emerald-500'
+                }`} />
+
+                {/* Timeline Item Content - Borderless */}
+                <div className={`p-2.5 rounded-lg transition-colors duration-200 ${
+                  isDark ? 'hover:bg-zinc-900/40' : 'hover:bg-zinc-100/60'
+                }`}>
+                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
+                    <p className={`text-xs sm:text-sm font-medium transition-colors duration-200 ${
                       isDark ? 'text-zinc-200 group-hover:text-white' : 'text-zinc-800 group-hover:text-black'
                     }`}>
                       {item.message}
                     </p>
                     
-                    <div className="flex items-center gap-2 mt-1 text-[11px] font-mono-code">
-                      <span className={`px-1.5 py-0.5 rounded border text-[10px] ${
-                        isDark ? 'bg-zinc-900 text-zinc-400 border-zinc-800' : 'bg-zinc-100 text-zinc-600 border-zinc-200'
-                      }`}>
-                        {item.repo}
-                      </span>
-                      <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>
-                        {formatRelativeTime(item.date)}
-                      </span>
-                    </div>
+                    <a
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`inline-flex items-center gap-1 text-xs font-mono-code flex-shrink-0 transition-colors ${
+                        isDark 
+                          ? 'text-emerald-400 hover:text-emerald-300' 
+                          : 'text-emerald-600 hover:text-emerald-700'
+                      }`}
+                    >
+                      <span>{item.sha}</span>
+                      <ExternalLink className="w-3 h-3 opacity-80" />
+                    </a>
+                  </div>
+
+                  {/* Meta Information */}
+                  <div className="flex items-center gap-2 mt-1.5 text-[11px] font-mono-code flex-wrap">
+                    <span className={`flex items-center gap-1 ${
+                      isDark ? 'text-zinc-400' : 'text-zinc-600'
+                    }`}>
+                      <GitBranch className="w-3 h-3 text-emerald-500 opacity-80" />
+                      {item.repo}
+                    </span>
+                    <span className={isDark ? 'text-zinc-700' : 'text-zinc-300'}>•</span>
+                    <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>
+                      {formatRelativeTime(item.date)}
+                    </span>
                   </div>
                 </div>
-
-                <a
-                  href={item.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center space-x-1 font-mono-code text-[11px] px-2 py-1 rounded border flex-shrink-0 self-end sm:self-center transition-colors ${
-                    isDark 
-                      ? 'bg-zinc-900 text-zinc-300 border-zinc-800 hover:border-zinc-700 hover:text-white' 
-                      : 'bg-white text-zinc-700 border-zinc-300 hover:border-zinc-400 hover:text-black'
-                  }`}
-                >
-                  <span>{item.sha}</span>
-                  <ExternalLink className="w-3 h-3 opacity-70" />
-                </a>
               </div>
             ))}
           </div>
