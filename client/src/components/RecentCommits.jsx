@@ -18,29 +18,60 @@ export default function RecentCommits() {
       const data = response.data;
       
       // Filter for PushEvent events which contain actual pushed commits
-      const pushEvents = data.filter(event => event.type === 'PushEvent');
+      const pushEvents = data.filter(event => event.type === 'PushEvent').slice(0, 6);
       
-      const commitList = [];
-      pushEvents.forEach(event => {
+      const commitPromises = pushEvents.map(async (event) => {
         const repoName = event.repo.name;
         const createdAt = new Date(event.created_at);
+        const refName = event.payload?.ref ? event.payload.ref.replace('refs/heads/', '') : 'main';
         
-        if (event.payload && event.payload.commits) {
-          event.payload.commits.forEach(commit => {
-            commitList.push({
-              sha: commit.sha.substring(0, 7),
-              fullSha: commit.sha,
-              message: commit.message,
-              repo: repoName,
-              date: createdAt,
-              url: `https://github.com/${repoName}/commit/${commit.sha}`
-            });
-          });
+        // 1. If payload contains commit details directly in commits array
+        if (event.payload && Array.isArray(event.payload.commits) && event.payload.commits.length > 0) {
+          const lastCommit = event.payload.commits[event.payload.commits.length - 1];
+          const sha = lastCommit.sha || event.payload.head || 'main';
+          return {
+            sha: sha.substring(0, 7),
+            fullSha: sha,
+            message: lastCommit.message ? lastCommit.message.split('\n')[0] : `Pushed code to ${refName}`,
+            repo: repoName,
+            branch: refName,
+            date: createdAt,
+            url: `https://github.com/${repoName}/commit/${sha}`
+          };
+        } 
+        
+        // 2. If payload contains head SHA (typical for GitHub public events feed)
+        if (event.payload && event.payload.head) {
+          const headSha = event.payload.head;
+          let commitMessage = `Pushed updates to ${refName}`;
+          
+          try {
+            // Fetch individual commit details from GitHub API via axios
+            const commitRes = await axios.get(`https://api.github.com/repos/${repoName}/commits/${headSha}`);
+            if (commitRes.data && commitRes.data.commit && commitRes.data.commit.message) {
+              commitMessage = commitRes.data.commit.message.split('\n')[0];
+            }
+          } catch (e) {
+            // Fallback message if rate-limited or private repo
+            commitMessage = `Pushed updates to ${refName}`;
+          }
+
+          return {
+            sha: headSha.substring(0, 7),
+            fullSha: headSha,
+            message: commitMessage,
+            repo: repoName,
+            branch: refName,
+            date: createdAt,
+            url: `https://github.com/${repoName}/commit/${headSha}`
+          };
         }
+
+        return null;
       });
 
-      // Take latest 6 commits
-      setCommits(commitList.slice(0, 6));
+      const resolvedCommits = (await Promise.all(commitPromises)).filter(Boolean);
+      setCommits(resolvedCommits);
     } catch (err) {
       console.error('Failed to fetch GitHub commits:', err);
       setError('Unable to load GitHub commits right now.');
