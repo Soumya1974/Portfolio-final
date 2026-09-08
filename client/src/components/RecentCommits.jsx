@@ -18,7 +18,7 @@ export default function RecentCommits() {
       const data = response.data;
       
       // Filter for PushEvent events which contain actual pushed commits
-      const pushEvents = data.filter(event => event.type === 'PushEvent').slice(0, 6);
+      const pushEvents = data.filter(event => event.type === 'PushEvent').slice(0, 12);
       
       const commitPromises = pushEvents.map(async (event) => {
         const repoName = event.repo.name;
@@ -157,60 +157,68 @@ export default function RecentCommits() {
           </p>
         ) : (
           <div 
-            className="relative border-l-2 ml-2 sm:ml-3 space-y-5 transition-colors duration-300"
-            style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}
+            className="max-h-[300px] overflow-y-auto pr-2 transition-colors duration-300"
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: isDark ? '#3f3f46 transparent' : '#d4d4d8 transparent'
+            }}
           >
-            {commits.map((item, idx) => (
-              <div key={idx} className="relative pl-5 group">
-                {/* Timeline Dot */}
-                <div className={`absolute -left-[7px] top-2 w-3 h-3 rounded-full transition-all duration-200 ${
-                  isDark 
-                    ? 'bg-emerald-500 ring-4 ring-zinc-950 group-hover:scale-125 group-hover:bg-emerald-400' 
-                    : 'bg-emerald-600 ring-4 ring-white group-hover:scale-125 group-hover:bg-emerald-500'
-                }`} />
+            <div 
+              className="relative border-l-2 ml-2 sm:ml-3 space-y-4 transition-colors duration-300 py-1"
+              style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}
+            >
+              {commits.map((item, idx) => (
+                <div key={idx} className="relative pl-5 group">
+                  {/* Timeline Dot */}
+                  <div className={`absolute -left-[7px] top-2 w-3 h-3 rounded-full transition-all duration-200 ${
+                    isDark 
+                      ? 'bg-emerald-500 ring-4 ring-zinc-950 group-hover:scale-125 group-hover:bg-emerald-400' 
+                      : 'bg-emerald-600 ring-4 ring-white group-hover:scale-125 group-hover:bg-emerald-500'
+                  }`} />
 
-                {/* Timeline Item Content - Borderless */}
-                <div className={`p-2.5 rounded-lg transition-colors duration-200 ${
-                  isDark ? 'hover:bg-zinc-900/40' : 'hover:bg-zinc-100/60'
-                }`}>
-                  <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
-                    <p className={`text-xs sm:text-sm font-medium transition-colors duration-200 ${
-                      isDark ? 'text-zinc-200 group-hover:text-white' : 'text-zinc-800 group-hover:text-black'
-                    }`}>
-                      {item.message}
-                    </p>
-                    
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center gap-1 text-xs font-mono-code flex-shrink-0 transition-colors ${
-                        isDark 
-                          ? 'text-emerald-400 hover:text-emerald-300' 
-                          : 'text-emerald-600 hover:text-emerald-700'
-                      }`}
-                    >
-                      <span>{item.sha}</span>
-                      <ExternalLink className="w-3 h-3 opacity-80" />
-                    </a>
-                  </div>
+                  {/* Timeline Item Content - Borderless */}
+                  <div className={`p-2.5 rounded-lg transition-colors duration-200 ${
+                    isDark ? 'hover:bg-zinc-900/40' : 'hover:bg-zinc-100/60'
+                  }`}>
+                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 sm:gap-4">
+                      <p className={`text-xs sm:text-sm font-medium transition-colors duration-200 ${
+                        isDark ? 'text-zinc-200 group-hover:text-white' : 'text-zinc-800 group-hover:text-black'
+                      }`}>
+                        {item.message}
+                      </p>
+                      
+                      <a
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={`inline-flex items-center gap-1 text-xs font-mono-code flex-shrink-0 transition-colors ${
+                          isDark 
+                            ? 'text-emerald-400 hover:text-emerald-300' 
+                            : 'text-emerald-600 hover:text-emerald-700'
+                        }`}
+                      >
+                        <span>{item.sha}</span>
+                        <ExternalLink className="w-3 h-3 opacity-80" />
+                      </a>
+                    </div>
 
-                  {/* Meta Information */}
-                  <div className="flex items-center gap-2 mt-1.5 text-[11px] font-mono-code flex-wrap">
-                    <span className={`flex items-center gap-1 ${
-                      isDark ? 'text-zinc-400' : 'text-zinc-600'
-                    }`}>
-                      <GitBranch className="w-3 h-3 text-emerald-500 opacity-80" />
-                      {item.repo}
-                    </span>
-                    <span className={isDark ? 'text-zinc-700' : 'text-zinc-300'}>•</span>
-                    <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>
-                      {formatRelativeTime(item.date)}
-                    </span>
+                    {/* Meta Information */}
+                    <div className="flex items-center gap-2 mt-1.5 text-[11px] font-mono-code flex-wrap">
+                      <span className={`flex items-center gap-1 ${
+                        isDark ? 'text-zinc-400' : 'text-zinc-600'
+                      }`}>
+                        <GitBranch className="w-3 h-3 text-emerald-500 opacity-80" />
+                        {item.repo}
+                      </span>
+                      <span className={isDark ? 'text-zinc-700' : 'text-zinc-300'}>•</span>
+                      <span className={isDark ? 'text-zinc-500' : 'text-zinc-400'}>
+                        {formatRelativeTime(item.date)}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
       </div>
