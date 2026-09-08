@@ -1,45 +1,6 @@
 import React from 'react';
-import { Code, BookOpen, Gamepad2, Camera, Coffee, Sparkles } from 'lucide-react';
+import { Box, Sparkles, Film, Layers } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
-
-const hobbiesList = [
-  {
-    icon: Code,
-    title: 'Open Source & Side Projects',
-    category: 'Engineering',
-    description: 'Building minimalist developer utilities, experimenting with web frameworks, and contributing to high-impact open-source repositories.'
-  },
-  {
-    icon: BookOpen,
-    title: 'Technical Writing & Content',
-    category: 'Education',
-    description: 'Drafting architecture guides, recording video tutorials for YouTube, and writing blogs about modern full-stack development.'
-  },
-  {
-    icon: Gamepad2,
-    title: 'PC Building & Gaming',
-    category: 'Leisure',
-    description: 'Assembling custom liquid-cooled PC rigs and enjoying strategy and indie games during downtime.'
-  },
-  {
-    icon: Camera,
-    title: 'Minimalist Photography',
-    category: 'Creative',
-    description: 'Capturing urban architecture, street photography, and aesthetic workspace setups in high contrast monochrome.'
-  },
-  {
-    icon: Coffee,
-    title: 'Specialty Coffee Brewing',
-    category: 'Lifestyle',
-    description: 'Exploring single-origin espresso beans and refining V60 pour-over technique for the perfect morning brew.'
-  },
-  {
-    icon: Sparkles,
-    title: 'UI/UX Craftsmanship',
-    category: 'Design',
-    description: 'Studying minimalist design systems, typography hierarchy, and subtle micro-animations for sleek web applications.'
-  }
-];
 
 export default function HobbiesSection() {
   const { isDark } = useTheme();
@@ -59,48 +20,76 @@ export default function HobbiesSection() {
           Hobbies & Passions
         </h1>
         <p className={`text-base max-w-xl ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-          What keeps me inspired outside of day-to-day software engineering and educational video production.
+          What keeps me inspired outside of software engineering and development.
         </p>
       </div>
 
-      {/* Grid of Hobbies */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {hobbiesList.map((item, index) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={index}
-              className={`p-5 rounded-xl border transition-all duration-300 group ${
-                isDark 
-                  ? 'border-zinc-900 bg-zinc-950 hover:border-zinc-700 hover:bg-zinc-900/60' 
-                  : 'border-zinc-200 bg-white hover:border-black'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <div className={`p-2 rounded-lg transition-colors ${
-                  isDark 
-                    ? 'bg-zinc-900 group-hover:bg-white' 
-                    : 'bg-zinc-100 group-hover:bg-black'
-                }`}>
-                  <Icon className={`w-5 h-5 transition-colors ${
-                    isDark 
-                      ? 'text-zinc-300 group-hover:text-black' 
-                      : 'text-zinc-800 group-hover:text-white'
-                  }`} />
-                </div>
-                <span className={`font-mono-code text-xs ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  {item.category}
-                </span>
-              </div>
-              <h3 className={`font-bold text-lg mb-1 ${isDark ? 'text-white' : 'text-black'}`}>
-                {item.title}
-              </h3>
-              <p className={`text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-                {item.description}
-              </p>
+      {/* 3D Modeling & Animation Passion Card */}
+      <div className={`p-6 sm:p-8 rounded-2xl border transition-all duration-300 relative overflow-hidden group ${
+        isDark 
+          ? 'border-zinc-800/80 bg-zinc-950/80 text-zinc-300 hover:border-zinc-700' 
+          : 'border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300'
+      }`}>
+        {/* Subtle accent backdrop glow */}
+        <div className={`absolute -right-16 -top-16 w-48 h-48 rounded-full blur-3xl opacity-20 pointer-events-none ${
+          isDark ? 'bg-amber-500' : 'bg-orange-400'
+        }`} />
+
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <div className="flex items-center gap-3">
+            <div className={`p-3 rounded-xl transition-colors ${
+              isDark ? 'bg-zinc-900 text-amber-400 border border-zinc-800' : 'bg-amber-50 text-amber-600 border border-amber-100'
+            }`}>
+              <Box className="w-6 h-6" />
             </div>
-          );
-        })}
+            <div>
+              <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-black'}`}>
+                3D Modeling & Animation (Blender)
+              </h2>
+              <span className={`font-mono-code text-xs ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
+                Blender • Rigging • Environments • Minecraft Animation
+              </span>
+            </div>
+          </div>
+          
+          <span className={`px-2.5 py-1 rounded-full text-xs font-mono-code border ${
+            isDark ? 'bg-zinc-900 text-amber-400 border-amber-500/20' : 'bg-amber-50 text-amber-700 border-amber-200'
+          }`}>
+            Creative Passion
+          </span>
+        </div>
+
+        <p className={`text-base sm:text-lg leading-relaxed mt-4 ${
+          isDark ? 'text-zinc-300' : 'text-zinc-700'
+        }`}>
+          My Blender journey started with curiosity and gradually grew into a passion for 3D modeling and animation. I’ve been learning through experimentation, working with modeling, rigging, environments, and character animation, while spending a lot of time creating Minecraft animations and improving my workflow with every project.
+        </p>
+
+        {/* Highlights */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-6 pt-6 border-t border-dashed transition-colors"
+             style={{ borderColor: isDark ? '#27272a' : '#f4f4f5' }}>
+          {[
+            { label: '3D Modeling', icon: Box },
+            { label: 'Character Rigging', icon: Layers },
+            { label: 'Environment Design', icon: Sparkles },
+            { label: 'Minecraft Animation', icon: Film },
+          ].map((item, idx) => {
+            const TagIcon = item.icon;
+            return (
+              <div 
+                key={idx} 
+                className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-mono-code transition-colors ${
+                  isDark 
+                    ? 'bg-zinc-900/50 border-zinc-800 text-zinc-400' 
+                    : 'bg-zinc-50 border-zinc-200 text-zinc-600'
+                }`}
+              >
+                <TagIcon className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+                <span>{item.label}</span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
