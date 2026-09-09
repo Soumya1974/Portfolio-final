@@ -112,7 +112,7 @@ const timeline = [
 ];
 
 export default function TechStackPage() {
-    const [stackId, setStackId] = useState(2);
+    const [stackId, setStackId] = useState(1);
     const { isDark } = useTheme();
 
     const active = fieldOptions.find(f => f.id === stackId) || fieldOptions[0];

@@ -13,12 +13,13 @@ export default function ProfileInfo() {
           isDark ? 'text-white' : 'text-black'
         }`}>
           Soumya ranjan sahoo
+          <span className='ml-2 text-[12px]'>(He/Him)</span>
         </h1>
 
         <p className={`transition-colors duration-300 font-sans ${
           isDark ? 'text-zinc-300' : 'text-zinc-700'
         }`}>
-          I build software with a focus on scalability, performance, and real-world impact. I also explore 3D animation and content creation in my free time, combining technology and creativity to bring ideas to life.
+          I build software with a focus on scalability, performance, and real-world impact. I also do 3D animation and content creation in my free time which is very rare, anyways combining technology and creativity to bring ideas to life.
         </p>
 
         <p className={`text-xs font-mono-code transition-colors duration-300 ${
