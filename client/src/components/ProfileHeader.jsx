@@ -16,7 +16,7 @@ export default function ProfileHeader() {
           isDark ? 'border-zinc-800 bg-black ring-4 ring-black' : 'border-zinc-200 bg-white ring-4 ring-white'
         }`}>
           <img
-            src="/images/SoumyaPfp.jpeg"
+            src="/images/SoumyaPfp.webp"
             alt="Soumya Avatar"
             className="w-full h-full object-cover grayscale contrast-125 hover:grayscale-0 transition-all duration-500"
             onError={(e) => {

@@ -1,0 +1,69 @@
+%PDF-1.4
+1 0 obj <</Type /Catalog /Pages 2 0 R>> endobj
+2 0 obj <</Type /Pages /Kinds [3 0 R] /Count 1 /Kids [3 0 R]>> endobj
+3 0 obj <</Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources <</Font <</F1 5 0 R /F2 6 0 R>>>> >> endobj
+4 0 obj <</Length 1200>> stream
+BT
+/F2 20 Tf
+50 740 Td (SOUMYA RANJAN SAHOO) Tj
+/F1 11 Tf
+0 -22 Td (MERN Stack Full Stack Developer) Tj
+0 -16 Td (Email: soumya1874@gmail.com | Phone: +91 7609838533) Tj
+0 -14 Td (GitHub: github.com/Soumya1974 | LinkedIn: linkedin.com/in/soumya1974) Tj
+0 -24 Td (---------------------------------------------------------------------------------------------------) Tj
+/F2 13 Tf
+0 -20 Td (SUMMARY) Tj
+/F1 10 Tf
+0 -15 Td (Full Stack Developer specializing in the MERN stack, experienced in building scalable web architectures,) Tj
+0 -13 Td (secure REST APIs, and robust authentication systems. Adept at translating business logic into clean,) Tj
+0 -13 Td (maintainable code across full-stack applications with advanced authentication and state management.) Tj
+0 -24 Td (---------------------------------------------------------------------------------------------------) Tj
+/F2 13 Tf
+0 -20 Td (TECHNICAL SKILLS) Tj
+/F1 10 Tf
+0 -15 Td (Languages: JavaScript, Python, Java, C++, SQL, C) Tj
+0 -14 Td (Frameworks & Libraries: React, Node.js, Express.js, MongoDB, Redux, Tailwind CSS) Tj
+0 -14 Td (Tools & DevOps: Git, GitHub, VS Code, Postman, Docker) Tj
+0 -24 Td (---------------------------------------------------------------------------------------------------) Tj
+/F2 13 Tf
+0 -20 Td (PROJECTS) Tj
+/F2 11 Tf
+0 -16 Td (SprintLab | Collaborative Project Management Platform (In Progress)) Tj
+/F1 10 Tf
+0 -14 Td (- Developing a MERN-stack flagship platform engineered for scalable workspace management & team collaboration.) Tj
+0 -13 Td (- Implemented Role-Based Access Control (RBAC) with project, task, and activity tracking systems.) Tj
+/F2 11 Tf
+0 -18 Td (Food Label Intelligence | AI & Legal Metrology System) Tj
+/F1 10 Tf
+0 -14 Td (- Computer Vision system scanning packaging to extract consumer rule violations via PaddleOCR & LLMs.) Tj
+/F2 11 Tf
+0 -18 Td (CashFlow | Expense Management App (Live)) Tj
+/F1 10 Tf
+0 -14 Td (- Built a Redux-powered expense management application with complete CRUD functionality.) Tj
+0 -24 Td (---------------------------------------------------------------------------------------------------) Tj
+/F2 13 Tf
+0 -20 Td (EDUCATION) Tj
+/F2 10 Tf
+0 -15 Td (Master of Computer Applications (MCA) 2025 - 2027) Tj
+/F1 10 Tf
+0 -13 Td (Trident Academy of Creative Technology, Bhubaneswar) Tj
+/F2 10 Tf
+0 -16 Td (Bachelor of Science in Chemistry (B.Sc Chemistry) 2022 - 2025) Tj
+ET
+endstream
+endobj
+5 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica>> endobj
+6 0 obj <</Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold>> endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000056 00000 n 
+000000125 00000 n 
+000000268 00000 n 
+0000001520 00000 n 
+0000001587 00000 n 
+trailer <</Size 7 /Root 1 0 R>>
+startxref
+1659
+%%EOF

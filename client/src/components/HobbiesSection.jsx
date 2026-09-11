@@ -43,7 +43,7 @@ export default function HobbiesSection() {
             {/* Bento Main Hero Render */}
             <div className="md:col-span-2 group relative overflow-hidden rounded-xl h-56 sm:h-64 shadow-xs">
               <img 
-                src="/renders/render1.png" 
+                src="/renders/render1.webp" 
                 alt="Minecraft Blender Render - Steve Selfie" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -56,7 +56,7 @@ export default function HobbiesSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 gap-3">
               <div className="group relative overflow-hidden rounded-xl h-36 sm:h-30 md:h-[7.75rem] shadow-xs">
                 <img 
-                  src="/renders/render2.png" 
+                  src="/renders/render2.webp" 
                   alt="Minecraft Blender Render - Steve Low Angle" 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
@@ -67,7 +67,7 @@ export default function HobbiesSection() {
 
               <div className="group relative overflow-hidden rounded-xl h-36 sm:h-30 md:h-[7.75rem] shadow-xs">
                 <img 
-                  src="/renders/render3.png" 
+                  src="/renders/render3.webp" 
                   alt="Minecraft Blender Render - Hobbit House Entrance" 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
