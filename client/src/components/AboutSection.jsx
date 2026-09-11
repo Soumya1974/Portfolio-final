@@ -1,5 +1,4 @@
 import React from 'react';
-import { Terminal, Award, Cpu, Mail, MapPin, Globe } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
 
 const skills = [
@@ -9,24 +8,26 @@ const skills = [
   'Cloudinary', 'JWT & OAuth', 'Blender', 'REST APIs'
 ];
 
-const timeline = [
+const journeyTimeline = [
   {
-    year: '2024 - Present',
-    role: 'Senior Software Engineer & Content Creator',
-    company: 'Independent / TechVerse',
-    details: 'Building scalable web applications, open-source tools, and producing educational technical tutorials.'
+    title: 'Started with Development',
+    details: 'I started learning programming out of curiosity and gradually moved into web development. I began with the basics and started building small projects to understand how things work beyond tutorials.'
   },
   {
-    year: '2022 - 2024',
-    role: 'Full Stack Engineer',
-    company: 'Cloud Scale Inc.',
-    details: 'Architected high-throughput microservices and responsive front-end applications for enterprise clients.'
+    title: 'Getting into Full-Stack',
+    details: 'I moved from frontend development into the MERN stack, learning how to build APIs, work with databases, authentication, and connect everything into a complete application. Projects became the main way I learned.'
   },
   {
-    year: '2020 - 2022',
-    role: 'Frontend Developer',
-    company: 'Digital Craft Studio',
-    details: 'Developed custom UI component systems and optimized web application load times and SEO performance.'
+    title: 'Discovering Blender',
+    details: 'Alongside coding, I started experimenting with Blender. It began as a hobby and became another way for me to work with animation, 3D models, cameras, lighting, and rendering.'
+  },
+  {
+    title: 'Combining Both',
+    details: 'Over time, development and Blender became two parts of the same journey. I started exploring ideas where software and 3D could work together, while continuing to improve my development skills through different projects.'
+  },
+  {
+    title: 'Still Building',
+    details: 'I\'m still learning and experimenting — working on full-stack projects, exploring 3D, and trying different technologies along the way.'
   }
 ];
 
@@ -45,54 +46,18 @@ export default function AboutSection() {
         <p className={`text-base leading-relaxed max-w-2xl font-normal ${
           isDark ? 'text-zinc-400' : 'text-zinc-600'
         }`}>
-          Hello! I am Soumya, a passionate software engineer, educator, and digital creator. 
+          Hello! I am Soumya, a passionate software engineer and digital creator. 
           I specialize in building elegant, minimal, and high-performance web applications while sharing 
           everything I learn along the way.
         </p>
       </div>
 
-      {/* Quick Facts */}
-      <div className={`grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono-code text-xs ${
-        isDark ? 'text-zinc-400' : 'text-zinc-600'
-      }`}>
-        <div className={`p-4 rounded-xl border transition-colors duration-300 ${
-          isDark ? 'border-zinc-900 bg-zinc-950' : 'border-zinc-200 bg-white'
-        }`}>
-          <div className={`flex items-center space-x-2 font-semibold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>
-            <MapPin className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
-            <span>Location</span>
-          </div>
-          <p>India · Remote Worldwide</p>
-        </div>
-
-        <div className={`p-4 rounded-xl border transition-colors duration-300 ${
-          isDark ? 'border-zinc-900 bg-zinc-950' : 'border-zinc-200 bg-white'
-        }`}>
-          <div className={`flex items-center space-x-2 font-semibold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>
-            <Globe className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
-            <span>Experience</span>
-          </div>
-          <p>5+ Years Engineering</p>
-        </div>
-
-        <div className={`p-4 rounded-xl border transition-colors duration-300 ${
-          isDark ? 'border-zinc-900 bg-zinc-950' : 'border-zinc-200 bg-white'
-        }`}>
-          <div className={`flex items-center space-x-2 font-semibold mb-1 ${isDark ? 'text-white' : 'text-black'}`}>
-            <Mail className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
-            <span>Contact</span>
-          </div>
-          <p>soumya1874@gmail.com</p>
-        </div>
-      </div>
-
-      {/* Philosophy */}
+      {/* Engineering Philosophy */}
       <div className="space-y-3">
-        <h2 className={`text-xl font-bold tracking-tight flex items-center gap-2 ${
+        <h2 className={`text-xl font-bold tracking-tight ${
           isDark ? 'text-white' : 'text-black'
         }`}>
-          <Terminal className={`w-5 h-5 ${isDark ? 'text-zinc-400' : 'text-zinc-700'}`} />
-          <span>Engineering Philosophy</span>
+          Engineering Philosophy
         </h2>
         <p className={`text-sm leading-relaxed max-w-2xl font-normal ${
           isDark ? 'text-zinc-400' : 'text-zinc-600'
@@ -103,13 +68,12 @@ export default function AboutSection() {
         </p>
       </div>
 
-      {/* Tech Stack */}
+      {/* Technologies & Tools */}
       <div className="space-y-4">
-        <h2 className={`text-xl font-bold tracking-tight flex items-center gap-2 ${
+        <h2 className={`text-xl font-bold tracking-tight ${
           isDark ? 'text-white' : 'text-black'
         }`}>
-          <Cpu className={`w-5 h-5 ${isDark ? 'text-zinc-400' : 'text-zinc-700'}`} />
-          <span>Technologies & Tools</span>
+          Technologies & Tools
         </h2>
         <div className="flex flex-wrap gap-2">
           {skills.map((skill, idx) => (
@@ -117,7 +81,7 @@ export default function AboutSection() {
               key={idx}
               className={`font-mono-code text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors ${
                 isDark 
-                  ? 'bg-zinc-900 text-zinc-300 border-zinc-800' 
+                  ? 'bg-zinc-900/80 text-zinc-300 border-zinc-800' 
                   : 'bg-zinc-100 text-zinc-800 border-zinc-200'
               }`}
             >
@@ -127,31 +91,30 @@ export default function AboutSection() {
         </div>
       </div>
 
-      {/* Career Journey */}
-      <div className={`space-y-4 pt-4 border-t transition-colors duration-300 ${
+      {/* Classic Simple Journey Timeline */}
+      <div className={`space-y-6 pt-6 border-t transition-colors duration-300 ${
         isDark ? 'border-zinc-900' : 'border-zinc-100'
       }`}>
-        <h2 className={`text-xl font-bold tracking-tight flex items-center gap-2 ${
+        <h2 className={`text-xl font-bold tracking-tight ${
           isDark ? 'text-white' : 'text-black'
         }`}>
-          <Award className={`w-5 h-5 ${isDark ? 'text-zinc-400' : 'text-zinc-700'}`} />
-          <span>Career Journey</span>
+          Journey Timeline
         </h2>
 
-        <div className="space-y-4">
-          {timeline.map((item, index) => (
-            <div key={index} className={`p-4 rounded-xl border space-y-1 transition-colors duration-300 ${
-              isDark ? 'border-zinc-900 bg-zinc-950' : 'border-zinc-200 bg-white'
-            }`}>
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between">
-                <h3 className={`font-bold text-base ${isDark ? 'text-white' : 'text-black'}`}>
-                  {item.role} <span className={`font-normal ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`}>@ {item.company}</span>
-                </h3>
-                <span className={`font-mono-code text-xs ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                  {item.year}
-                </span>
-              </div>
-              <p className={`text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+        <div className={`space-y-6 border-l pl-4 ml-1 transition-colors ${
+          isDark ? 'border-zinc-800' : 'border-zinc-200'
+        }`}>
+          {journeyTimeline.map((item, index) => (
+            <div key={index} className="space-y-1">
+              <h3 className={`font-bold text-base tracking-tight transition-colors ${
+                isDark ? 'text-white' : 'text-black'
+              }`}>
+                {item.title}
+              </h3>
+              
+              <p className={`text-sm leading-relaxed font-sans max-w-2xl transition-colors ${
+                isDark ? 'text-zinc-400' : 'text-zinc-600'
+              }`}>
                 {item.details}
               </p>
             </div>
