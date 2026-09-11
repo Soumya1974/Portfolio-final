@@ -82,7 +82,7 @@ export default function AboutSection() {
             <Mail className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
             <span>Contact</span>
           </div>
-          <p>soumya@example.com</p>
+          <p>soumya1874@gmail.com</p>
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Download, FileText } from 'lucide-react';
 import StatsSection from './StatsSection';
 import { useTheme } from '../ThemeContext';
 
@@ -9,12 +10,14 @@ export default function ProfileInfo() {
     <div className="space-y-4 py-2 font-mono-code ">
       <div className="space-y-3 leading-relaxed text-sm sm:text-base">
 
-        <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors duration-300 ${
-          isDark ? 'text-white' : 'text-black'
-        }`}>
-          Soumya ranjan sahoo
-          <span className='ml-2 text-[12px]'>(He/Him)</span>
-        </h1>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors duration-300 ${
+            isDark ? 'text-white' : 'text-black'
+          }`}>
+            Soumya ranjan sahoo
+            <span className='ml-2 text-[12px] font-normal text-zinc-500'>(He/Him)</span>
+          </h1>
+        </div>
 
         <p className={`transition-colors duration-300 font-sans ${
           isDark ? 'text-zinc-300' : 'text-zinc-700'

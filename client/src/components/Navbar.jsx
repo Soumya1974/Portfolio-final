@@ -56,6 +56,17 @@ export default function Navbar({ activeTab, setActiveTab }) {
                 {item.label}
               </button>
             ))}
+            <a
+              href="/Soumya_Ranjan_Sahoo_CV.pdf"
+              download="Soumya_Ranjan_Sahoo_CV.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-colors py-1 cursor-pointer flex items-center gap-1 ${
+                isDark ? 'hover:text-white' : 'hover:text-black'
+              }`}
+            >
+              <span>cv</span>
+            </a>
           </nav>
 
           {/* Desktop Text-Only Theme Toggle Button (Hidden on Mobile) */}
@@ -104,6 +115,18 @@ export default function Navbar({ activeTab, setActiveTab }) {
               {item.label}
             </button>
           ))}
+          <a
+            href="/Soumya_Ranjan_Sahoo_CV.pdf"
+            download="Soumya_Ranjan_Sahoo_CV.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMobileMenuOpen(false)}
+            className={`block w-full text-left py-2.5 px-3.5 rounded-lg transition-colors cursor-pointer ${
+              isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-black'
+            }`}
+          >
+            download cv
+          </a>
 
           {/* Theme Toggle Button inside Hamburger Menu for Mobile */}
           <div className="pt-2 border-t mt-2" style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}>

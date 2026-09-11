@@ -36,7 +36,7 @@ export default function ConnectSection({ setActiveTab }) {
         </button>
 
         <a
-          href="mailto:soumya@example.com"
+          href="mailto:soumya1874@gmail.com"
           className={`inline-flex items-center space-x-1.5 underline underline-offset-4 transition-colors ${
             isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black'
           }`}
@@ -46,19 +46,7 @@ export default function ConnectSection({ setActiveTab }) {
         </a>
 
         <a
-          href="https://twitter.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`inline-flex items-center space-x-1.5 underline underline-offset-4 transition-colors ${
-            isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black'
-          }`}
-        >
-          <span>Twitter / X</span>
-          <ArrowUpRight className="w-3.5 h-3.5" />
-        </a>
-
-        <a
-          href="https://github.com"
+          href="https://github.com/Soumya1974"
           target="_blank"
           rel="noopener noreferrer"
           className={`inline-flex items-center space-x-1.5 underline underline-offset-4 transition-colors ${
@@ -66,6 +54,30 @@ export default function ConnectSection({ setActiveTab }) {
           }`}
         >
           <span>GitHub</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </a>
+
+        <a
+          href="https://www.linkedin.com/in/soumya1974"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex items-center space-x-1.5 underline underline-offset-4 transition-colors ${
+            isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black'
+          }`}
+        >
+          <span>LinkedIn</span>
+          <ArrowUpRight className="w-3.5 h-3.5" />
+        </a>
+
+        <a
+          href="https://x.com/S0umya1974"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex items-center space-x-1.5 underline underline-offset-4 transition-colors ${
+            isDark ? 'text-zinc-400 hover:text-white' : 'text-zinc-600 hover:text-black'
+          }`}
+        >
+          <span>Twitter / X</span>
           <ArrowUpRight className="w-3.5 h-3.5" />
         </a>
       </div>

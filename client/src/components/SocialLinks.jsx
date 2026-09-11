@@ -6,11 +6,11 @@ export default function SocialLinks() {
   const { isDark } = useTheme();
 
   const links = [
-    { name: 'GitHub', url: 'https://github.com', icon: GithubIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
-    { name: 'X (Twitter)', url: 'https://x.com', icon: XIcon, iconSize: 'w-3 h-3 sm:w-3.5 sm:h-3.5' },
-    { name: 'YouTube', url: 'https://youtube.com', icon: YoutubeIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
-    { name: 'LinkedIn', url: 'https://linkedin.com', icon: LinkedinIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
-    { name: 'Instagram', url: 'https://instagram.com', icon: InstagramIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
+    { name: 'GitHub', url: 'https://github.com/Soumya1974', icon: GithubIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
+    { name: 'X (Twitter)', url: 'https://x.com/S0umya1974', icon: XIcon, iconSize: 'w-3 h-3 sm:w-3.5 sm:h-3.5' },
+    { name: 'YouTube', url: 'https://youtube.com/@badlandshd?si=7vonLgaAkCu3IhrL', icon: YoutubeIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/soumya1974', icon: LinkedinIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
+    { name: 'Instagram', url: 'https://www.instagram.com/1974.soumya?stkn=MXU4b3RodGE2d3dpaw==', icon: InstagramIcon, iconSize: 'w-3.5 h-3.5 sm:w-4 sm:h-4' },
   ];
 
   return (

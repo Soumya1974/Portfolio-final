@@ -42,7 +42,7 @@ export default function ContactSection({ setActiveTab }) {
             <Mail className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
             <span>Email</span>
           </div>
-          <p className={`truncate ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>soumya1974@gmail.com</p>
+          <p className={`truncate ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>soumya1874@gmail.com</p>
         </div>
 
         <div className={`p-4 rounded-xl border space-y-1 transition-colors duration-300 ${
@@ -52,7 +52,7 @@ export default function ContactSection({ setActiveTab }) {
             <MapPin className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
             <span>Location</span>
           </div>
-          <p className={isDark ? 'text-zinc-400' : 'text-zinc-600'}>India · Remote</p>
+          <p className={isDark ? 'text-zinc-400' : 'text-zinc-600'}>Bhubaneswar, India</p>
         </div>
 
         <div className={`p-4 rounded-xl border space-y-1 transition-colors duration-300 ${
@@ -60,12 +60,14 @@ export default function ContactSection({ setActiveTab }) {
         }`}>
           <div className={`flex items-center space-x-2 font-semibold ${isDark ? 'text-white' : 'text-black'}`}>
             <MessageSquare className={`w-4 h-4 ${isDark ? 'text-zinc-400' : 'text-zinc-500'}`} />
-            <span>Socials</span>
+            <span>Social Profiles</span>
           </div>
-          <div className={`flex items-center space-x-2 pt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" className={isDark ? 'hover:text-white' : 'hover:text-black'}>GitHub</a>
+          <div className={`flex flex-wrap items-center gap-2 pt-0.5 ${isDark ? 'text-zinc-400' : 'text-zinc-600'}`}>
+            <a href="https://github.com/Soumya1974" target="_blank" rel="noopener noreferrer" className={isDark ? 'hover:text-white' : 'hover:text-black'}>GitHub</a>
             <span>·</span>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className={isDark ? 'hover:text-white' : 'hover:text-black'}>Twitter</a>
+            <a href="https://www.linkedin.com/in/soumya1974" target="_blank" rel="noopener noreferrer" className={isDark ? 'hover:text-white' : 'hover:text-black'}>LinkedIn</a>
+            <span>·</span>
+            <a href="https://x.com/S0umya1974" target="_blank" rel="noopener noreferrer" className={isDark ? 'hover:text-white' : 'hover:text-black'}>X</a>
           </div>
         </div>
       </div>
