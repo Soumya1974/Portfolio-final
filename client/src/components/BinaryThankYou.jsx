@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../ThemeContext';
 
 export default function BinaryThankYou() {
-  const targetText = "Thank you for visiting my page. Have a good day!";
+  const targetText = window.innerWidth < 640 ? "Thank you! for visiting my page." : "Thank you! for visiting my page. Have a good day!";
   const { isDark } = useTheme();
 
   // Start with scrambled binary text before scrolling into view
