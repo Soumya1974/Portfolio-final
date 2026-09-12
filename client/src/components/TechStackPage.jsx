@@ -156,11 +156,11 @@ export default function TechStackPage() {
                         Tech Stack I Use
                     </h2>
                 </div>
-                <span className={`font-mono-code text-xs transition-colors duration-300 ${
+                {/* <span className={`font-mono-code text-xs transition-colors duration-300 ${
                     isDark ? 'text-zinc-500' : 'text-zinc-400'
                 }`}>
                     {active.languages.length} of {fieldOptions[0].languages.length}
-                </span>
+                </span> */}
             </div>
 
             {/* Category Selector Tabs */}
