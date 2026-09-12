@@ -8,7 +8,7 @@ import HobbiesSection from './components/HobbiesSection';
 import AboutSection from './components/AboutSection';
 import ContactSection from './components/ContactSection';
 import ConnectSection from './components/ConnectSection';
-import Footer from './components/Footer';
+// import Footer from './components/Footer';
 import TechStackPage from './components/TechStackPage';
 import { useTheme } from './ThemeContext';
 import GithubActivity from './components/GithubActivity';
@@ -106,7 +106,7 @@ export default function App() {
         )}
 
         {/* Footer */}
-        <Footer />
+        {/* <Footer /> */}
       </main>
     </div>
   );
