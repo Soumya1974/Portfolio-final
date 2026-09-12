@@ -99,13 +99,46 @@ export default function Navbar({ activeTab, setActiveTab }) {
 
       {/* Mobile Navigation Dropdown Drawer (Positions on top of Hero Section) */}
       {mobileMenuOpen && (
-        <div className={`sm:hidden absolute top-full left-0 right-0 z-50 border-b backdrop-blur-xl px-4 py-3.5 font-mono-code text-sm space-y-2 shadow-2xl animate-fadeIn ${
-          isDark ? 'border-zinc-800 bg-black/95 text-zinc-300' : 'border-zinc-200 bg-white/95 text-zinc-700'
-        }`}>
-          {navItems.map((item) => (
+        <div 
+          className={`sm:hidden absolute top-full left-0 right-0 z-50 border-b backdrop-blur-xl px-4 py-3.5 font-mono-code text-sm space-y-2 shadow-2xl ${
+            isDark ? 'border-zinc-800 bg-black/95 text-zinc-300' : 'border-zinc-200 bg-white/95 text-zinc-700'
+          }`}
+          style={{
+            animation: 'navSlideDown 0.25s ease-out forwards'
+          }}
+        >
+          <style>{`
+            @keyframes navSlideDown {
+              from {
+                opacity: 0;
+                transform: translateY(-8px);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0);
+              }
+            }
+            @keyframes navItemSlideLeft {
+              from {
+                opacity: 0;
+                transform: translateX(-16px);
+              }
+              to {
+                opacity: 1;
+                transform: translateX(0);
+              }
+            }
+          `}</style>
+
+          {navItems.map((item, idx) => (
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
+              style={{
+                animation: 'navItemSlideLeft 0.3s ease-out forwards',
+                animationDelay: `${idx * 50}ms`,
+                opacity: 0
+              }}
               className={`w-full text-left py-2.5 px-3.5 rounded-lg transition-colors cursor-pointer ${
                 activeTab === item.id
                   ? (isDark ? 'bg-white text-black font-semibold' : 'bg-zinc-900 text-white font-semibold')
@@ -115,12 +148,18 @@ export default function Navbar({ activeTab, setActiveTab }) {
               {item.label}
             </button>
           ))}
+
           <a
             href="/Soumya_Ranjan_Sahoo_CV.pdf"
             download="Soumya_Ranjan_Sahoo_CV.pdf"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMobileMenuOpen(false)}
+            style={{
+              animation: 'navItemSlideLeft 0.3s ease-out forwards',
+              animationDelay: `${navItems.length * 50}ms`,
+              opacity: 0
+            }}
             className={`block w-full text-left py-2.5 px-3.5 rounded-lg transition-colors cursor-pointer ${
               isDark ? 'text-zinc-400 hover:bg-zinc-900 hover:text-white' : 'text-zinc-600 hover:bg-zinc-100 hover:text-black'
             }`}
@@ -129,7 +168,15 @@ export default function Navbar({ activeTab, setActiveTab }) {
           </a>
 
           {/* Theme Toggle Button inside Hamburger Menu for Mobile */}
-          <div className="pt-2 border-t mt-2" style={{ borderColor: isDark ? '#27272a' : '#e4e4e7' }}>
+          <div 
+            className="pt-2 border-t mt-2" 
+            style={{ 
+              borderColor: isDark ? '#27272a' : '#e4e4e7',
+              animation: 'navItemSlideLeft 0.3s ease-out forwards',
+              animationDelay: `${(navItems.length + 1) * 50}ms`,
+              opacity: 0
+            }}
+          >
             <button
               onClick={() => {
                 toggleTheme();
