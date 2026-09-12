@@ -81,11 +81,11 @@ export default function ProjectsSection() {
         }`}>
           Projects By Me
         </h2>
-        <span className={`font-mono-code text-xs transition-colors duration-300 ${
+        {/* <span className={`font-mono-code text-xs transition-colors duration-300 ${
           isDark ? 'text-zinc-500' : 'text-zinc-400'
         }`}>
           selected ({projects.length})
-        </span>
+        </span> */}
       </div>
 
       {/* Sleek Rectangular Cards Grid */}
