@@ -111,12 +111,84 @@ const timeline = [
     }
 ];
 
+let techKeyAudioCtx = null;
+
+const play80HzKeySound = () => {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!techKeyAudioCtx || techKeyAudioCtx.state === 'closed') {
+      techKeyAudioCtx = new AudioCtx();
+    }
+    if (techKeyAudioCtx.state === 'suspended') {
+      techKeyAudioCtx.resume();
+    }
+    const ctx = techKeyAudioCtx;
+    const now = ctx.currentTime;
+
+    // Primary 80Hz Mechanical Key Switch Fundamental Oscillator
+    const osc = ctx.createOscillator();
+    const oscGain = ctx.createGain();
+
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(80, now);
+    osc.frequency.exponentialRampToValueAtTime(35, now + 0.035);
+
+    oscGain.gain.setValueAtTime(0.12, now);
+    oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+
+    osc.connect(oscGain);
+    oscGain.connect(ctx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.045);
+
+    // High-Frequency Keycap Metallic Clack Layer
+    const bufferSize = Math.floor(ctx.sampleRate * 0.008);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 2800;
+
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.06, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
+
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+
+    noise.start(now);
+    noise.stop(now + 0.015);
+
+    // Subtle 10ms haptic feedback pulse on mobile
+    if (typeof window !== 'undefined' && 'navigator' in window && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(10);
+    }
+  } catch (e) {
+    // Autoplay restrictions handled gracefully
+  }
+};
+
 export default function TechStackPage() {
     const [stackId, setStackId] = useState(1);
     const { isDark } = useTheme();
 
     const active = fieldOptions.find(f => f.id === stackId) || fieldOptions[0];
     const activeTimeline = timeline[stackId - 1] || timeline[0];
+
+    const handleFilterClick = (id) => {
+        play80HzKeySound();
+        setStackId(id);
+    };
 
     return (
         <section className={`pt-6 pb-10 border-t transition-colors duration-300 ${
@@ -168,7 +240,7 @@ export default function TechStackPage() {
                 {fieldOptions.map(({ title, id, code }) => (
                     <button
                         key={id}
-                        onClick={() => setStackId(id)}
+                        onClick={() => handleFilterClick(id)}
                         className={`px-3 py-1.5 rounded-lg text-xs font-mono-code font-semibold transition-all duration-200 cursor-pointer border flex items-center gap-1.5 ${
                             stackId === id
                                 ? (isDark ? 'bg-white text-black border-white shadow-xs scale-[1.02]' : 'bg-zinc-900 text-white border-zinc-900 shadow-xs scale-[1.02]')
