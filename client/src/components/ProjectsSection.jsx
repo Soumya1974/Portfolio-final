@@ -66,7 +66,7 @@ const playWoodStackSound = () => {
     osc.frequency.exponentialRampToValueAtTime(80, now + 0.035);
     
     // Acoustic wood tap oscillator with rich tactile feel
-    gain.gain.setValueAtTime(0.11, now);
+    gain.gain.setValueAtTime(0.15, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
     
     osc.connect(gain);
@@ -91,7 +91,7 @@ const playWoodStackSound = () => {
     noiseFilter.frequency.value = 700;
     
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.048, now);
+    noiseGain.gain.setValueAtTime(0.065, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
     
     noise.connect(noiseFilter);
