@@ -65,8 +65,8 @@ const playWoodStackSound = () => {
     osc.frequency.setValueAtTime(280, now);
     osc.frequency.exponentialRampToValueAtTime(80, now + 0.035);
     
-    // Low gain for subtle, gentle acoustic feedback
-    gain.gain.setValueAtTime(0.08, now);
+    // Acoustic wood tap oscillator with rich tactile feel
+    gain.gain.setValueAtTime(0.11, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
     
     osc.connect(gain);
@@ -75,7 +75,7 @@ const playWoodStackSound = () => {
     osc.start(now);
     osc.stop(now + 0.045);
 
-    // Warm, low-volume acoustic thud layer
+    // Warm acoustic thud layer
     const bufferSize = Math.floor(ctx.sampleRate * 0.01);
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
@@ -91,7 +91,7 @@ const playWoodStackSound = () => {
     noiseFilter.frequency.value = 700;
     
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.035, now);
+    noiseGain.gain.setValueAtTime(0.048, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
     
     noise.connect(noiseFilter);
