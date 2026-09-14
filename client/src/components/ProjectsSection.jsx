@@ -105,6 +105,16 @@ const playWoodStackSound = () => {
   }
 };
 
+const triggerHapticStack = () => {
+  try {
+    if (typeof window !== 'undefined' && 'navigator' in window && typeof navigator.vibrate === 'function') {
+      navigator.vibrate(15);
+    }
+  } catch (e) {
+    // Haptic permission handled gracefully
+  }
+};
+
 export default function ProjectsSection() {
   const { isDark } = useTheme();
   const [activeIdx, setActiveIdx] = useState(null);
@@ -115,7 +125,10 @@ export default function ProjectsSection() {
   const handleLiveClick = (e, project, idx) => {
     e.preventDefault();
     e.stopPropagation();
-    if (window.innerWidth < 640) playWoodStackSound();
+    if (window.innerWidth < 640) {
+      playWoodStackSound();
+      triggerHapticStack();
+    }
     if (project.status === 'live') {
       window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
     } else {
@@ -123,7 +136,7 @@ export default function ProjectsSection() {
     }
   };
 
-  // Sound effect triggers every time a card enters sticky stacked position on scroll
+  // Sound effect & haptic vibration triggers every time a card enters sticky stacked position on scroll
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -141,6 +154,7 @@ export default function ProjectsSection() {
           if (!stackedCards.current[idx]) {
             stackedCards.current[idx] = true;
             playWoodStackSound();
+            triggerHapticStack();
           }
         } else if (rect.top > targetTop + 16) {
           // Re-arm trigger when scrolling back above sticky threshold
