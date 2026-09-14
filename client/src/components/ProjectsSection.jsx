@@ -42,29 +42,38 @@ const projects = [
   }
 ];
 
+let sharedAudioCtx = null;
+
 const playWoodStackSound = () => {
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) return;
-    const ctx = new AudioCtx();
+    if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
+      sharedAudioCtx = new AudioCtx();
+    }
+    if (sharedAudioCtx.state === 'suspended') {
+      sharedAudioCtx.resume();
+    }
+    const ctx = sharedAudioCtx;
+    const now = ctx.currentTime;
     
-    // Very soft & subtle organic wood tap oscillator
+    // Soft & subtle organic wood tap oscillator
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(280, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.035);
+    osc.frequency.setValueAtTime(280, now);
+    osc.frequency.exponentialRampToValueAtTime(80, now + 0.035);
     
     // Low gain for subtle, gentle acoustic feedback
-    gain.gain.setValueAtTime(0.06, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.08, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
     
     osc.connect(gain);
     gain.connect(ctx.destination);
     
-    osc.start();
-    osc.stop(ctx.currentTime + 0.045);
+    osc.start(now);
+    osc.stop(now + 0.045);
 
     // Warm, low-volume acoustic thud layer
     const bufferSize = Math.floor(ctx.sampleRate * 0.01);
@@ -82,15 +91,15 @@ const playWoodStackSound = () => {
     noiseFilter.frequency.value = 700;
     
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.03, ctx.currentTime);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
+    noiseGain.gain.setValueAtTime(0.035, now);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
     
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
     
-    noise.start();
-    noise.stop(ctx.currentTime + 0.02);
+    noise.start(now);
+    noise.stop(now + 0.02);
   } catch (e) {
     // Autoplay restrictions handled gracefully
   }
@@ -126,22 +135,26 @@ export default function ProjectsSection() {
         const rect = el.getBoundingClientRect();
         const targetTop = 72 + idx * 12;
 
-        const isAtStickyPos = rect.top <= targetTop + 6;
+        const isStacked = rect.top <= targetTop + 8;
 
-        if (isAtStickyPos) {
+        if (isStacked) {
           if (!stackedCards.current[idx]) {
             stackedCards.current[idx] = true;
             playWoodStackSound();
           }
-        } else {
-          // Re-arm trigger when scrolling back up past threshold
+        } else if (rect.top > targetTop + 16) {
+          // Re-arm trigger when scrolling back above sticky threshold
           stackedCards.current[idx] = false;
         }
       });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('touchmove', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchmove', handleScroll);
+    };
   }, []);
 
   // Close desktop popover when clicking outside
