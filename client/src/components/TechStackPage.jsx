@@ -134,7 +134,7 @@ const play80HzKeySound = () => {
     osc.frequency.setValueAtTime(80, now);
     osc.frequency.exponentialRampToValueAtTime(35, now + 0.035);
 
-    oscGain.gain.setValueAtTime(0.04, now);
+    oscGain.gain.setValueAtTime(0.08, now);
     oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
 
     osc.connect(oscGain);
@@ -159,7 +159,7 @@ const play80HzKeySound = () => {
     noiseFilter.frequency.value = 2800;
 
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.02, now);
+    noiseGain.gain.setValueAtTime(0.04, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.012);
 
     noise.connect(noiseFilter);
