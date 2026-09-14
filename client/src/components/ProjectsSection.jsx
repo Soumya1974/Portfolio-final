@@ -48,25 +48,26 @@ const playWoodStackSound = () => {
     if (!AudioCtx) return;
     const ctx = new AudioCtx();
     
-    // Wood block thud oscillator
+    // Very soft & subtle organic wood tap oscillator
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(450, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.04);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(280, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.035);
     
-    gain.gain.setValueAtTime(0.25, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
+    // Low gain for subtle, gentle acoustic feedback
+    gain.gain.setValueAtTime(0.06, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.04);
     
     osc.connect(gain);
     gain.connect(ctx.destination);
     
     osc.start();
-    osc.stop(ctx.currentTime + 0.05);
+    osc.stop(ctx.currentTime + 0.045);
 
-    // Subtle noise slap for natural wood grain sound
-    const bufferSize = Math.floor(ctx.sampleRate * 0.015);
+    // Warm, low-volume acoustic thud layer
+    const bufferSize = Math.floor(ctx.sampleRate * 0.01);
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = buffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
@@ -77,21 +78,21 @@ const playWoodStackSound = () => {
     noise.buffer = buffer;
     
     const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.value = 1400;
+    noiseFilter.type = 'lowpass';
+    noiseFilter.frequency.value = 700;
     
     const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.12, ctx.currentTime);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
+    noiseGain.gain.setValueAtTime(0.03, ctx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
     
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
     
     noise.start();
-    noise.stop(ctx.currentTime + 0.025);
+    noise.stop(ctx.currentTime + 0.02);
   } catch (e) {
-    // Autoplay restrictions handle gracefully
+    // Autoplay restrictions handled gracefully
   }
 };
 
@@ -113,7 +114,7 @@ export default function ProjectsSection() {
     }
   };
 
-  // Sound effect trigger when mobile sticky cards stack upon scrolling
+  // Sound effect triggers every time a card enters sticky stacked position on scroll
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -125,12 +126,15 @@ export default function ProjectsSection() {
         const rect = el.getBoundingClientRect();
         const targetTop = 72 + idx * 12;
 
-        if (rect.top <= targetTop + 8) {
+        const isAtStickyPos = rect.top <= targetTop + 6;
+
+        if (isAtStickyPos) {
           if (!stackedCards.current[idx]) {
             stackedCards.current[idx] = true;
             playWoodStackSound();
           }
         } else {
+          // Re-arm trigger when scrolling back up past threshold
           stackedCards.current[idx] = false;
         }
       });
