@@ -42,20 +42,103 @@ const projects = [
   }
 ];
 
+const playWoodStackSound = () => {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    
+    // Wood block thud oscillator
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(450, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.04);
+    
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.045);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + 0.05);
+
+    // Subtle noise slap for natural wood grain sound
+    const bufferSize = Math.floor(ctx.sampleRate * 0.015);
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    
+    const noise = ctx.createBufferSource();
+    noise.buffer = buffer;
+    
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = 'bandpass';
+    noiseFilter.frequency.value = 1400;
+    
+    const noiseGain = ctx.createGain();
+    noiseGain.gain.setValueAtTime(0.12, ctx.currentTime);
+    noiseGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.02);
+    
+    noise.connect(noiseFilter);
+    noiseFilter.connect(noiseGain);
+    noiseGain.connect(ctx.destination);
+    
+    noise.start();
+    noise.stop(ctx.currentTime + 0.025);
+  } catch (e) {
+    // Autoplay restrictions handle gracefully
+  }
+};
+
 export default function ProjectsSection() {
   const { isDark } = useTheme();
   const [activeIdx, setActiveIdx] = useState(null);
   const containerRef = useRef(null);
+  const cardRefs = useRef([]);
+  const stackedCards = useRef({});
 
   const handleLiveClick = (e, project, idx) => {
     e.preventDefault();
     e.stopPropagation();
+    if (window.innerWidth < 640) playWoodStackSound();
     if (project.status === 'live') {
       window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
     } else {
       setActiveIdx(activeIdx === idx ? null : idx);
     }
   };
+
+  // Sound effect trigger when mobile sticky cards stack upon scrolling
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleScroll = () => {
+      if (window.innerWidth >= 640) return;
+
+      cardRefs.current.forEach((el, idx) => {
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const targetTop = 72 + idx * 12;
+
+        if (rect.top <= targetTop + 8) {
+          if (!stackedCards.current[idx]) {
+            stackedCards.current[idx] = true;
+            playWoodStackSound();
+          }
+        } else {
+          stackedCards.current[idx] = false;
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Close desktop popover when clicking outside
   useEffect(() => {
@@ -96,6 +179,7 @@ export default function ProjectsSection() {
           return (
             <div
               key={idx}
+              ref={(el) => (cardRefs.current[idx] = el)}
               style={{
                 top: `calc(4.5rem + ${idx * 0.75}rem)`
               }}
