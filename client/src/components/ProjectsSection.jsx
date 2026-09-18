@@ -212,9 +212,10 @@ export default function ProjectsSection() {
               key={idx}
               ref={(el) => (cardRefs.current[idx] = el)}
               style={{
-                top: `calc(4.5rem + ${idx * 0.75}rem)`
+                top: `calc(4.5rem + ${idx * 0.75}rem)`,
+                zIndex: 10 + idx,
               }}
-              className={`sticky sm:static relative p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between group min-h-[140px] ${
+              className={`sticky sm:relative p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between group min-h-[140px] ${
                 isDark 
                   ? 'border-zinc-800 bg-zinc-950 shadow-xl sm:shadow-none hover:border-zinc-700 hover:bg-zinc-900/60' 
                   : 'border-zinc-200 bg-white shadow-md sm:shadow-none hover:border-black'

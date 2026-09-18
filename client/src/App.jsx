@@ -38,6 +38,11 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    // Reset scroll position to top whenever navigating to a new tab/page
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [activeTab]);
+
   // Handle Touch Start
   const handleTouchStart = (e) => {
     if (e.touches.length !== 1) return;
