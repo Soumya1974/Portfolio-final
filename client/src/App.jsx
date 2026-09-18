@@ -190,7 +190,7 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 overflow-x-hidden ${
+    <div className={`min-h-screen font-sans transition-colors duration-300 [overflow-x:clip] ${
       isDark 
         ? 'bg-black text-white selection:bg-white selection:text-black' 
         : 'bg-white text-black selection:bg-zinc-900 selection:text-white'
@@ -210,7 +210,7 @@ export default function App() {
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className={`w-full overflow-x-hidden relative touch-pan-y ${isDragging ? 'select-none cursor-grabbing' : ''}`}
+        className={`w-full [overflow-x:clip] relative touch-pan-y ${isDragging ? 'select-none cursor-grabbing' : ''}`}
       >
         <div 
           className="flex flex-row w-[400%] h-full"

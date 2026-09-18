@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { ExternalLink, ArrowUpRight, X } from 'lucide-react';
 import { GithubIcon } from './SocialIcons';
 import { useTheme } from '../ThemeContext';
@@ -385,9 +386,9 @@ export default function ProjectsSection() {
               )}
 
               {/* -------------------- MOBILE CENTERED OVERLAY MODAL (< sm screens) -------------------- */}
-              {isOpen && (
+              {isOpen && typeof document !== 'undefined' && createPortal(
                 <div
-                  className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm sm:hidden animate-fadeIn"
+                  className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs sm:hidden animate-fadeIn"
                   onClick={() => setActiveIdx(null)}
                 >
                   <div
@@ -443,7 +444,7 @@ export default function ProjectsSection() {
                         className={`w-full py-2.5 px-4 rounded-lg font-semibold border transition-all text-center flex items-center justify-center space-x-1.5 ${
                           project.status === 'under_development'
                             ? (isDark ? 'bg-white text-black hover:bg-zinc-200 border-transparent' : 'bg-black text-white hover:bg-zinc-800 border-transparent')
-                            : (isDark ? 'border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700' : 'border-zinc-200 text-zinc-700 hover:text-black hover:border-black')
+                            : (isDark ? 'border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700' : 'border-zinc-200 text-zinc-700 hover:text-black hover:bg-zinc-100')
                         }`}
                       >
                         <GithubIcon className="w-3.5 h-3.5" />
@@ -451,7 +452,8 @@ export default function ProjectsSection() {
                       </a>
                     </div>
                   </div>
-                </div>
+                </div>,
+                document.body
               )}
             </div>
           );
