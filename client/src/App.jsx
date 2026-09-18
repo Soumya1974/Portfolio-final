@@ -215,8 +215,8 @@ export default function App() {
           }}
         >
           {/* Page 0: Home */}
-          <div className="w-1/4 shrink-0 px-4 sm:px-6 max-w-3xl mx-auto w-full">
-            <div className="space-y-6 animate-fadeIn pb-12">
+          <div className="w-[25%] shrink-0 box-border">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full space-y-6 animate-fadeIn pb-12">
               <ProfileHeader />
               <ProfileInfo />
               <HomeAboutSection />
@@ -229,22 +229,22 @@ export default function App() {
           </div>
 
           {/* Page 1: About */}
-          <div className="w-1/4 shrink-0 px-4 sm:px-6 max-w-3xl mx-auto w-full">
-            <div className="pb-12">
+          <div className="w-[25%] shrink-0 box-border">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12">
               <AboutSection />
             </div>
           </div>
 
           {/* Page 2: Contact */}
-          <div className="w-1/4 shrink-0 px-4 sm:px-6 max-w-3xl mx-auto w-full">
-            <div className="pb-12">
+          <div className="w-[25%] shrink-0 box-border">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12">
               <ContactSection setActiveTab={setActiveTab} />
             </div>
           </div>
 
           {/* Page 3: Hobbies */}
-          <div className="w-1/4 shrink-0 px-4 sm:px-6 max-w-3xl mx-auto w-full">
-            <div className="pb-12">
+          <div className="w-[25%] shrink-0 box-border">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12">
               <HobbiesSection />
             </div>
           </div>
