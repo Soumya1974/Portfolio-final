@@ -42,6 +42,12 @@ const projects = [
   }
 ];
 
+// ---- Consistent spacing tokens used everywhere below ----
+const CARD_PADDING = 'p-5';
+const CARD_RADIUS = 'rounded-2xl';
+const CARD_GAP = 'gap-4';
+const SECTION_TO_GRID_GAP = 'mb-5';
+
 let sharedAudioCtx = null;
 
 const playWoodStackSound = () => {
@@ -56,22 +62,22 @@ const playWoodStackSound = () => {
     }
     const ctx = sharedAudioCtx;
     const now = ctx.currentTime;
-    
+
     // Soft & subtle organic wood tap oscillator
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    
+
     osc.type = 'sine';
     osc.frequency.setValueAtTime(280, now);
     osc.frequency.exponentialRampToValueAtTime(80, now + 0.035);
-    
+
     // Acoustic wood tap oscillator with rich tactile feel
     gain.gain.setValueAtTime(0.15, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-    
+
     osc.connect(gain);
     gain.connect(ctx.destination);
-    
+
     osc.start(now);
     osc.stop(now + 0.045);
 
@@ -82,22 +88,22 @@ const playWoodStackSound = () => {
     for (let i = 0; i < bufferSize; i++) {
       data[i] = Math.random() * 2 - 1;
     }
-    
+
     const noise = ctx.createBufferSource();
     noise.buffer = buffer;
-    
+
     const noiseFilter = ctx.createBiquadFilter();
     noiseFilter.type = 'lowpass';
     noiseFilter.frequency.value = 700;
-    
+
     const noiseGain = ctx.createGain();
     noiseGain.gain.setValueAtTime(0.065, now);
     noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
-    
+
     noise.connect(noiseFilter);
     noiseFilter.connect(noiseGain);
     noiseGain.connect(ctx.destination);
-    
+
     noise.start(now);
     noise.stop(now + 0.02);
   } catch (e) {
@@ -118,9 +124,26 @@ const triggerHapticStack = () => {
 export default function ProjectsSection() {
   const { isDark } = useTheme();
   const [activeIdx, setActiveIdx] = useState(null);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false
+  );
   const containerRef = useRef(null);
   const cardRefs = useRef([]);
   const stackedCards = useRef({});
+
+  // Track viewport so the sticky-stack inline offsets ONLY ever apply on
+  // mobile. Previously the `top` / `zIndex` inline styles were applied
+  // unconditionally, which (because inline styles win over Tailwind's
+  // `sm:relative`) silently shifted every desktop card down by an
+  // increasing amount — that's what was causing the uneven
+  // margin/padding look across cards on larger screens.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLiveClick = (e, project, idx) => {
     e.preventDefault();
@@ -183,41 +206,39 @@ export default function ProjectsSection() {
   }, []);
 
   return (
-    <section 
+    <section
       ref={containerRef}
       className={`pt-6 pb-10 border-t transition-colors duration-300 ${
         isDark ? 'border-zinc-900' : 'border-zinc-100'
       }`}
     >
-      <div className="flex items-center justify-between mb-4">
+      <div className={`flex items-center justify-between ${SECTION_TO_GRID_GAP}`}>
         <h2 className={`text-xl font-bold tracking-tight transition-colors duration-300 ${
           isDark ? 'text-white' : 'text-black'
         }`}>
           Projects By Me
         </h2>
-        {/* <span className={`font-mono-code text-xs transition-colors duration-300 ${
-          isDark ? 'text-zinc-500' : 'text-zinc-400'
-        }`}>
-          selected ({projects.length})
-        </span> */}
       </div>
 
       {/* Sleek Rectangular Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className={`grid grid-cols-1 sm:grid-cols-2 ${CARD_GAP}`}>
         {projects.map((project, idx) => {
           const isOpen = activeIdx === idx;
+
+          // Sticky-stack offset is now only ever applied on mobile, so
+          // desktop cards sit flush in the grid with identical spacing.
+          const stackStyle = isMobile
+            ? { top: `calc(4.5rem + ${idx * 0.75}rem)`, zIndex: 10 + idx }
+            : undefined;
 
           return (
             <div
               key={idx}
               ref={(el) => (cardRefs.current[idx] = el)}
-              style={{
-                top: `calc(4.5rem + ${idx * 0.75}rem)`,
-                zIndex: 10 + idx,
-              }}
-              className={`sticky sm:relative p-4 rounded-xl border transition-all duration-200 flex flex-col justify-between group min-h-[140px] ${
-                isDark 
-                  ? 'border-zinc-800 bg-zinc-950 shadow-xl sm:shadow-none hover:border-zinc-700 hover:bg-zinc-900/60' 
+              style={stackStyle}
+              className={`sticky sm:relative sm:top-auto sm:z-auto ${CARD_PADDING} ${CARD_RADIUS} border transition-all duration-200 flex flex-col justify-between group min-h-[140px] ${
+                isDark
+                  ? 'border-zinc-800 bg-zinc-950 shadow-xl sm:shadow-none hover:border-zinc-700 hover:bg-zinc-900/60'
                   : 'border-zinc-200 bg-white shadow-md sm:shadow-none hover:border-black'
               }`}
             >
@@ -237,8 +258,8 @@ export default function ProjectsSection() {
                     }`} />
                   </a>
                   <span className={`font-mono-code text-[10px] px-1.5 py-0.5 rounded border flex-shrink-0 transition-colors ${
-                    isDark 
-                      ? 'bg-zinc-900 text-zinc-300 border-zinc-800' 
+                    isDark
+                      ? 'bg-zinc-900 text-zinc-300 border-zinc-800'
                       : 'bg-zinc-100 text-zinc-500 border-zinc-200/60'
                   }`}>
                     {project.badge}
@@ -257,8 +278,8 @@ export default function ProjectsSection() {
                     <span
                       key={tIdx}
                       className={`font-mono-code text-[10px] px-1.5 py-0.5 rounded border transition-colors ${
-                        isDark 
-                          ? 'bg-zinc-900 text-zinc-300 border-zinc-800' 
+                        isDark
+                          ? 'bg-zinc-900 text-zinc-300 border-zinc-800'
                           : 'bg-zinc-50 text-zinc-600 border-zinc-200/50'
                       }`}
                     >
@@ -298,9 +319,9 @@ export default function ProjectsSection() {
               {/* -------------------- DESKTOP SIDE POPOVER (Attached next to card/button on sm+ screens) -------------------- */}
               {isOpen && (
                 <div
-                  className={`hidden sm:block absolute z-40 right-0 bottom-full mb-2 w-80 p-5 rounded-2xl border shadow-2xl backdrop-blur-xl animate-fadeIn transition-all ${
-                    isDark 
-                      ? 'bg-zinc-950/95 border-zinc-800 text-white shadow-black/80' 
+                  className={`hidden sm:block absolute z-40 right-0 bottom-full mb-2 w-80 ${CARD_PADDING} ${CARD_RADIUS} border shadow-2xl backdrop-blur-xl animate-fadeIn transition-all ${
+                    isDark
+                      ? 'bg-zinc-950/95 border-zinc-800 text-white shadow-black/80'
                       : 'bg-white/95 border-zinc-200 text-black shadow-zinc-400/30'
                   }`}
                   onClick={(e) => e.stopPropagation()}
@@ -365,12 +386,12 @@ export default function ProjectsSection() {
 
               {/* -------------------- MOBILE CENTERED OVERLAY MODAL (< sm screens) -------------------- */}
               {isOpen && (
-                <div 
+                <div
                   className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm sm:hidden animate-fadeIn"
                   onClick={() => setActiveIdx(null)}
                 >
                   <div
-                    className={`relative w-full max-w-md p-6 rounded-2xl border shadow-2xl space-y-4 transition-colors ${
+                    className={`relative w-full max-w-md ${CARD_PADDING} ${CARD_RADIUS} border shadow-2xl space-y-4 transition-colors ${
                       isDark ? 'bg-zinc-950 border-zinc-800 text-white' : 'bg-white border-zinc-200 text-black'
                     }`}
                     onClick={(e) => e.stopPropagation()}
