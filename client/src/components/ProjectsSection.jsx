@@ -103,13 +103,13 @@ export default function ProjectsSection() {
       </div>
 
       {/* Cards Container: Mobile = Sticky Stacked Column, Desktop = 2-Column Grid */}
-      <div className="flex flex-col space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
+      <div className="flex flex-col space-y-6 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
         {projects.map((project, idx) => {
           const isOpen = activeIdx === idx;
 
-          // Sticky-stack offset ONLY applied on mobile screen width (<640px)
+          // Sticky-stack offset for mobile deck (<640px)
           const stackStyle = isMobile
-            ? { top: `calc(4.5rem + ${idx * 1.15}rem)`, zIndex: 10 + idx }
+            ? { top: `calc(1rem + ${idx * 3.25}rem)`, zIndex: 10 + idx }
             : undefined;
 
           return (
@@ -117,10 +117,10 @@ export default function ProjectsSection() {
               key={idx}
               ref={(el) => (cardRefs.current[idx] = el)}
               style={stackStyle}
-              className={`sticky sm:relative sm:top-auto sm:z-auto ${CARD_PADDING} ${CARD_RADIUS} border transition-all duration-300 flex flex-col justify-between group min-h-[140px] shadow-md sm:shadow-none ${
+              className={`sticky sm:relative sm:top-auto sm:z-auto ${CARD_PADDING} ${CARD_RADIUS} border transition-all duration-300 flex flex-col justify-between group min-h-[150px] shadow-xl sm:shadow-none ${
                 isDark
-                  ? 'border-zinc-800 bg-zinc-950/98 shadow-black/80 hover:border-zinc-700'
-                  : 'border-zinc-200 bg-white/98 shadow-zinc-200/80 hover:border-black'
+                  ? 'border-zinc-800 bg-black text-white shadow-black/90 hover:border-zinc-700'
+                  : 'border-zinc-200 bg-white text-black shadow-zinc-300/80 hover:border-black'
               }`}
             >
               <div>

@@ -37,6 +37,7 @@ export default function App() {
   const isInternalScrollRef = useRef(false);
   const isResettingRef = useRef(false);
   const scrollDebounceTimerRef = useRef(null);
+  const targetScrollLeftRef = useRef(0);
 
   // Initial page load timer
   useEffect(() => {
@@ -54,7 +55,9 @@ export default function App() {
 
     const width = container.clientWidth;
     if (width > 0) {
-      container.scrollLeft = width * 1;
+      const initialX = width * 1;
+      container.scrollLeft = initialX;
+      targetScrollLeftRef.current = initialX;
       setScrollProgress(1);
     }
   }, [pageLoading]);
@@ -91,19 +94,18 @@ export default function App() {
       killMomentumScroll(container);
       container.classList.add('no-smooth-scroll');
       container.style.scrollBehavior = 'auto';
-      container.scrollLeft = width * toIdx;
+      const targetX = width * toIdx;
+      container.scrollLeft = targetX;
+      targetScrollLeftRef.current = targetX;
       void container.offsetHeight; // Force instant synchronous layout recalculation
       setScrollProgress(toIdx);
       setActiveTab(pageName);
 
-      // Native momentum (especially on iOS) can still be "in flight"
-      // well past one animation frame, so hold the lock for ~120ms and
-      // re-check the position before releasing it. If momentum dragged
-      // the scroll position away during that window, snap it back.
       setTimeout(() => {
         if (Math.round(container.scrollLeft / width) !== toIdx) {
           container.style.scrollBehavior = 'auto';
-          container.scrollLeft = width * toIdx;
+          container.scrollLeft = targetX;
+          targetScrollLeftRef.current = targetX;
           void container.offsetHeight;
         }
         requestAnimationFrame(() => {
@@ -111,7 +113,7 @@ export default function App() {
           container.style.scrollBehavior = '';
           isResettingRef.current = false;
         });
-      }, 120);
+      }, 150);
     };
 
     // Teleport left clone (0) -> Primary Hobbies (4)
@@ -222,15 +224,17 @@ export default function App() {
       isInternalScrollRef.current = true;
       const width = container.clientWidth;
       if (width > 0) {
+        const targetX = width * targetIdx;
+        targetScrollLeftRef.current = targetX;
         container.scrollTo({
-          left: width * targetIdx,
+          left: targetX,
           behavior: 'smooth',
         });
       }
 
       setTimeout(() => {
         isInternalScrollRef.current = false;
-      }, 450);
+      }, 1000);
     }
   };
 
@@ -240,37 +244,37 @@ export default function App() {
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    let targetScrollLeft = container.scrollLeft;
     let animFrameId = null;
     let wheelTimeout = null;
 
     const lerpToTarget = () => {
-      if (!container) return;
+      if (!container || isResettingRef.current) return;
       const current = container.scrollLeft;
-      const diff = targetScrollLeft - current;
+      const diff = targetScrollLeftRef.current - current;
 
       if (Math.abs(diff) > 0.4) {
         container.scrollLeft = current + diff * 0.12;
         animFrameId = requestAnimationFrame(lerpToTarget);
       } else {
-        container.scrollLeft = targetScrollLeft;
+        container.scrollLeft = targetScrollLeftRef.current;
         animFrameId = null;
       }
     };
 
     const settleOnNearestPage = () => {
-      if (!container) return;
+      if (!container || isResettingRef.current) return;
       const width = container.clientWidth;
       if (width <= 0) return;
 
       const nearestIdx = Math.round(container.scrollLeft / width);
-      targetScrollLeft = nearestIdx * width;
+      targetScrollLeftRef.current = nearestIdx * width;
       if (!animFrameId) {
         animFrameId = requestAnimationFrame(lerpToTarget);
       }
     };
 
     const handleWheel = (e) => {
+      if (isResettingRef.current) return;
       // Check if user is scrolling inside a vertical inner container
       const target = e.target;
       const isInnerScrollable = target.closest('.overflow-y-auto, .react-activity-calendar');
@@ -294,7 +298,7 @@ export default function App() {
         const width = container.clientWidth;
 
         if (width > 0) {
-          targetScrollLeft = Math.max(0, Math.min(width * 5, targetScrollLeft + delta * 0.95));
+          targetScrollLeftRef.current = Math.max(0, Math.min(width * 5, targetScrollLeftRef.current + delta * 0.95));
 
           if (!animFrameId) {
             animFrameId = requestAnimationFrame(lerpToTarget);
