@@ -68,7 +68,7 @@ export default function BinaryThankYou() {
     }`}>
       <p
         onMouseEnter={triggerEffect}
-        className={`mt-10 font-mono-code font-bold text-sm sm:text-xl transition-colors cursor-pointer inline-block tracking-tight ${
+        className={`mt-10 font-mono-code font-bold text-lg sm:text-xl transition-colors cursor-pointer inline-block tracking-tight ${
           isDark ? 'text-zinc-300 hover:text-white' : 'text-zinc-900 hover:text-black'
         }`}
         title="Hover to trigger binary decode effect"

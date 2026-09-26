@@ -49,79 +49,6 @@ const CARD_RADIUS = 'rounded-2xl';
 const CARD_GAP = 'gap-4';
 const SECTION_TO_GRID_GAP = 'mb-5';
 
-let sharedAudioCtx = null;
-
-const playWoodStackSound = () => {
-  try {
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
-    if (!sharedAudioCtx || sharedAudioCtx.state === 'closed') {
-      sharedAudioCtx = new AudioCtx();
-    }
-    if (sharedAudioCtx.state === 'suspended') {
-      sharedAudioCtx.resume();
-    }
-    const ctx = sharedAudioCtx;
-    const now = ctx.currentTime;
-
-    // Soft & subtle organic wood tap oscillator
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(280, now);
-    osc.frequency.exponentialRampToValueAtTime(80, now + 0.035);
-
-    // Acoustic wood tap oscillator with rich tactile feel
-    gain.gain.setValueAtTime(0.15, now);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start(now);
-    osc.stop(now + 0.045);
-
-    // Warm acoustic thud layer
-    const bufferSize = Math.floor(ctx.sampleRate * 0.01);
-    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
-
-    const noise = ctx.createBufferSource();
-    noise.buffer = buffer;
-
-    const noiseFilter = ctx.createBiquadFilter();
-    noiseFilter.type = 'lowpass';
-    noiseFilter.frequency.value = 700;
-
-    const noiseGain = ctx.createGain();
-    noiseGain.gain.setValueAtTime(0.065, now);
-    noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
-
-    noise.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(ctx.destination);
-
-    noise.start(now);
-    noise.stop(now + 0.02);
-  } catch (e) {
-    // Autoplay restrictions handled gracefully
-  }
-};
-
-const triggerHapticStack = () => {
-  try {
-    if (typeof window !== 'undefined' && 'navigator' in window && typeof navigator.vibrate === 'function') {
-      navigator.vibrate(15);
-    }
-  } catch (e) {
-    // Haptic permission handled gracefully
-  }
-};
-
 export default function ProjectsSection() {
   const { isDark } = useTheme();
   const [activeIdx, setActiveIdx] = useState(null);
@@ -130,14 +57,7 @@ export default function ProjectsSection() {
   );
   const containerRef = useRef(null);
   const cardRefs = useRef([]);
-  const stackedCards = useRef({});
 
-  // Track viewport so the sticky-stack inline offsets ONLY ever apply on
-  // mobile. Previously the `top` / `zIndex` inline styles were applied
-  // unconditionally, which (because inline styles win over Tailwind's
-  // `sm:relative`) silently shifted every desktop card down by an
-  // increasing amount — that's what was causing the uneven
-  // margin/padding look across cards on larger screens.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -149,51 +69,12 @@ export default function ProjectsSection() {
   const handleLiveClick = (e, project, idx) => {
     e.preventDefault();
     e.stopPropagation();
-    if (window.innerWidth < 640) {
-      playWoodStackSound();
-      triggerHapticStack();
-    }
     if (project.status === 'live') {
       window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
     } else {
       setActiveIdx(activeIdx === idx ? null : idx);
     }
   };
-
-  // Sound effect & haptic vibration triggers every time a card enters sticky stacked position on scroll
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const handleScroll = () => {
-      if (window.innerWidth >= 640) return;
-
-      cardRefs.current.forEach((el, idx) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const targetTop = 72 + idx * 12;
-
-        const isStacked = rect.top <= targetTop + 8;
-
-        if (isStacked) {
-          if (!stackedCards.current[idx]) {
-            stackedCards.current[idx] = true;
-            playWoodStackSound();
-            triggerHapticStack();
-          }
-        } else if (rect.top > targetTop + 16) {
-          // Re-arm trigger when scrolling back above sticky threshold
-          stackedCards.current[idx] = false;
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('touchmove', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('touchmove', handleScroll);
-    };
-  }, []);
 
   // Close desktop popover when clicking outside
   useEffect(() => {
@@ -221,15 +102,14 @@ export default function ProjectsSection() {
         </h2>
       </div>
 
-      {/* Sleek Rectangular Cards Grid */}
-      <div className={`grid grid-cols-1 sm:grid-cols-2 ${CARD_GAP}`}>
+      {/* Cards Container: Mobile = Sticky Stacked Column, Desktop = 2-Column Grid */}
+      <div className="flex flex-col space-y-4 sm:space-y-0 sm:grid sm:grid-cols-2 sm:gap-4">
         {projects.map((project, idx) => {
           const isOpen = activeIdx === idx;
 
-          // Sticky-stack offset is now only ever applied on mobile, so
-          // desktop cards sit flush in the grid with identical spacing.
+          // Sticky-stack offset ONLY applied on mobile screen width (<640px)
           const stackStyle = isMobile
-            ? { top: `calc(4.5rem + ${idx * 0.75}rem)`, zIndex: 10 + idx }
+            ? { top: `calc(4.5rem + ${idx * 1.15}rem)`, zIndex: 10 + idx }
             : undefined;
 
           return (
@@ -237,10 +117,10 @@ export default function ProjectsSection() {
               key={idx}
               ref={(el) => (cardRefs.current[idx] = el)}
               style={stackStyle}
-              className={`sticky sm:relative sm:top-auto sm:z-auto ${CARD_PADDING} ${CARD_RADIUS} border transition-all duration-200 flex flex-col justify-between group min-h-[140px] ${
+              className={`sticky sm:relative sm:top-auto sm:z-auto ${CARD_PADDING} ${CARD_RADIUS} border transition-all duration-300 flex flex-col justify-between group min-h-[140px] shadow-md sm:shadow-none ${
                 isDark
-                  ? 'border-zinc-800 bg-zinc-950 shadow-xl sm:shadow-none hover:border-zinc-700 hover:bg-zinc-900/60'
-                  : 'border-zinc-200 bg-white shadow-md sm:shadow-none hover:border-black'
+                  ? 'border-zinc-800 bg-zinc-950/98 shadow-black/80 hover:border-zinc-700'
+                  : 'border-zinc-200 bg-white/98 shadow-zinc-200/80 hover:border-black'
               }`}
             >
               <div>

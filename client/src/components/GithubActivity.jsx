@@ -45,7 +45,8 @@ export default function GithubActivity() {
         };
     }, []);
 
-    const startDrag = (clientX) => {
+    const startDrag = (clientX, e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         const el = getScrollEl();
         if (!el) return;
         isDragging.current = true;
@@ -55,28 +56,33 @@ export default function GithubActivity() {
     };
 
     const moveDrag = (clientX, e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         const el = getScrollEl();
         if (!isDragging.current || !el) return;
         const walk = (startX.current - clientX) * 1.5;
         if (Math.abs(walk) > 3) dragMoved.current = true;
-        if (e && e.cancelable) e.preventDefault();
+        if (e && e.cancelable && Math.abs(walk) > 5) {
+            e.preventDefault();
+        }
         el.scrollLeft = scrollLeftPos.current + walk;
     };
 
-    const endDrag = () => {
+    const endDrag = (e) => {
+        if (e && e.stopPropagation) e.stopPropagation();
         isDragging.current = false;
     };
 
     const handleMouseDown = (e) => {
-        startDrag(e.clientX);
+        e.stopPropagation();
+        startDrag(e.clientX, e);
         window.addEventListener('mousemove', handleWindowMouseMove);
         window.addEventListener('mouseup', handleWindowMouseUp);
     };
 
     const handleWindowMouseMove = (e) => moveDrag(e.clientX, e);
 
-    const handleWindowMouseUp = () => {
-        endDrag();
+    const handleWindowMouseUp = (e) => {
+        endDrag(e);
         window.removeEventListener('mousemove', handleWindowMouseMove);
         window.removeEventListener('mouseup', handleWindowMouseUp);
     };
@@ -89,17 +95,21 @@ export default function GithubActivity() {
     };
 
     const handleTouchStart = (e) => {
-        if (e.touches.length === 1) startDrag(e.touches[0].clientX);
+        e.stopPropagation();
+        if (e.touches.length === 1) startDrag(e.touches[0].clientX, e);
     };
 
     const handleTouchMove = (e) => {
+        e.stopPropagation();
         if (e.touches.length === 1) moveDrag(e.touches[0].clientX, e);
     };
 
     const handleWheel = (e) => {
+        e.stopPropagation();
         const el = getScrollEl();
         if (el) {
-            el.scrollLeft += e.deltaY || e.deltaX;
+            const scrollDelta = e.deltaX !== 0 ? e.deltaX : e.deltaY;
+            el.scrollLeft += scrollDelta;
         }
     };
 
@@ -113,6 +123,8 @@ export default function GithubActivity() {
         [class*="activity-calendar"] * {
           -ms-overflow-style: none !important;
           scrollbar-width: none !important;
+          overscroll-behavior: contain !important;
+          overscroll-behavior-x: contain !important;
         }
         .no-scrollbar::-webkit-scrollbar,
         .no-scrollbar *::-webkit-scrollbar,
@@ -132,6 +144,9 @@ export default function GithubActivity() {
           width: 100% !important;
           max-width: 100% !important;
           box-sizing: border-box !important;
+          overscroll-behavior: contain !important;
+          overscroll-behavior-x: contain !important;
+          touch-action: pan-x pan-y !important;
         }
 
         /* SVG grid scroll container */
@@ -141,6 +156,9 @@ export default function GithubActivity() {
           width: 100% !important;
           max-width: 100% !important;
           display: block !important;
+          overscroll-behavior: contain !important;
+          overscroll-behavior-x: contain !important;
+          touch-action: pan-x pan-y !important;
         }
 
         /* SVG itself takes full SVG width */
@@ -219,7 +237,7 @@ export default function GithubActivity() {
                     <GitHubCalendar
                         username="Soumya1974"
                         colorScheme={isDark ? 'dark' : 'light'}
-                        blockSize={12}
+                        blockSize={15}
                         blockMargin={2}
                         fontSize={12}
                         theme={{

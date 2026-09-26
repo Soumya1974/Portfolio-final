@@ -13,150 +13,454 @@ import { useTheme } from './ThemeContext';
 import GithubActivity from './components/GithubActivity';
 import RecentCommits from './components/RecentCommits';
 
+// 6 Slides for Seamless Bi-Directional Infinite Looping:
+// [Hobbies-Clone, Home, About, Contact, Hobbies, Home-Clone]
+const SLIDES = [
+  { id: 'hobbies-clone', page: 'hobbies', isClone: true },
+  { id: 'home', page: 'home', isClone: false },
+  { id: 'about', page: 'about', isClone: false },
+  { id: 'contact', page: 'contact', isClone: false },
+  { id: 'hobbies', page: 'hobbies', isClone: false },
+  { id: 'home-clone', page: 'home', isClone: true },
+];
+
 const PAGES = ['home', 'about', 'contact', 'hobbies'];
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [pageLoading, setPageLoading] = useState(true);
+  const [scrollProgress, setScrollProgress] = useState(1);
   const { isDark } = useTheme();
 
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
+  const scrollContainerRef = useRef(null);
+  const pageRefs = useRef([]);
+  const isInternalScrollRef = useRef(false);
+  const isResettingRef = useRef(false);
+  const scrollDebounceTimerRef = useRef(null);
 
-  const startPosRef = useRef({ x: 0, y: 0 });
-  const isLockedRef = useRef(null);
-  const containerRef = useRef(null);
-  const lastWheelTimeRef = useRef(0);
-
-  const activeIndex = Math.max(0, PAGES.indexOf(activeTab));
-
+  // Initial page load timer
   useEffect(() => {
-    // Preload key images & smooth transition from initial loader
     const timer = setTimeout(() => {
       setPageLoading(false);
     }, 850);
     return () => clearTimeout(timer);
   }, []);
 
+  // Set initial scroll position to Primary Home (Index 1) on load
   useEffect(() => {
-    // Reset scroll position to top whenever navigating to a new tab/page
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [activeTab]);
+    if (pageLoading) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-  // Handle Touch Start
-  const handleTouchStart = (e) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    startPosRef.current = { x: touch.clientX, y: touch.clientY };
-    isLockedRef.current = null;
-    setIsDragging(true);
-    setDragOffset(0);
+    const width = container.clientWidth;
+    if (width > 0) {
+      container.scrollLeft = width * 1;
+      setScrollProgress(1);
+    }
+  }, [pageLoading]);
+
+  // Trick: toggling overflow off/on for one frame cancels the browser's
+  // native momentum/inertial scrolling, so it can't fight our manual
+  // scrollLeft change right after a teleport. This is the key fix for
+  // the "scrolls back left after a moment on mobile" bug.
+  const killMomentumScroll = (container) => {
+    const prevOverflow = container.style.overflowX;
+    container.style.overflowX = 'hidden';
+    void container.offsetHeight; // force reflow
+    container.style.overflowX = prevOverflow;
   };
 
-  // Handle Touch Move
-  const handleTouchMove = (e) => {
-    if (!startPosRef.current) return;
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - startPosRef.current.x;
-    const deltaY = touch.clientY - startPosRef.current.y;
+  // Glitch-Free Infinite Boundary Teleporting (Only triggers after swipe settles)
+  const checkInfiniteBoundary = () => {
+    const container = scrollContainerRef.current;
+    if (!container || isResettingRef.current) return;
+    const width = container.clientWidth;
+    if (width <= 0) return;
 
-    if (!isLockedRef.current) {
-      if (Math.abs(deltaX) > 8 && Math.abs(deltaX) > Math.abs(deltaY)) {
-        isLockedRef.current = 'horizontal';
-      } else if (Math.abs(deltaY) > 8 && Math.abs(deltaY) > Math.abs(deltaX)) {
-        isLockedRef.current = 'vertical';
-      }
-    }
+    const exactIndex = container.scrollLeft / width;
+    const roundedIndex = Math.round(exactIndex);
 
-    if (isLockedRef.current === 'horizontal') {
-      let effectiveDelta = deltaX;
-      if ((activeIndex === 0 && deltaX > 0) || (activeIndex === PAGES.length - 1 && deltaX < 0)) {
-        effectiveDelta = deltaX * 0.3;
+    const teleportTo = (fromIdx, toIdx, pageName) => {
+      isResettingRef.current = true;
+      const cloneEl = pageRefs.current[fromIdx];
+      const targetEl = pageRefs.current[toIdx];
+      if (cloneEl && targetEl) {
+        targetEl.scrollTop = cloneEl.scrollTop;
       }
-      setDragOffset(effectiveDelta);
+
+      killMomentumScroll(container);
+      container.classList.add('no-smooth-scroll');
+      container.style.scrollBehavior = 'auto';
+      container.scrollLeft = width * toIdx;
+      void container.offsetHeight; // Force instant synchronous layout recalculation
+      setScrollProgress(toIdx);
+      setActiveTab(pageName);
+
+      // Native momentum (especially on iOS) can still be "in flight"
+      // well past one animation frame, so hold the lock for ~120ms and
+      // re-check the position before releasing it. If momentum dragged
+      // the scroll position away during that window, snap it back.
+      setTimeout(() => {
+        if (Math.round(container.scrollLeft / width) !== toIdx) {
+          container.style.scrollBehavior = 'auto';
+          container.scrollLeft = width * toIdx;
+          void container.offsetHeight;
+        }
+        requestAnimationFrame(() => {
+          container.classList.remove('no-smooth-scroll');
+          container.style.scrollBehavior = '';
+          isResettingRef.current = false;
+        });
+      }, 120);
+    };
+
+    // Teleport left clone (0) -> Primary Hobbies (4)
+    if (roundedIndex === 0 && Math.abs(exactIndex - 0) < 0.04) {
+      teleportTo(0, 4, 'hobbies');
+    } else if (roundedIndex === 5 && Math.abs(exactIndex - 5) < 0.04) {
+      // Teleport right clone (5) -> Primary Home (1)
+      teleportTo(5, 1, 'home');
     }
   };
 
-  // Handle Touch End / Cancel
-  const handleTouchEnd = () => {
-    if (isLockedRef.current === 'horizontal') {
-      const containerWidth = containerRef.current?.offsetWidth || window.innerWidth;
-      const threshold = Math.min(containerWidth * 0.15, 60);
+  // 60fps Direct GPU 3D Swipe Tilt Animation (Synchronous while swiping/dragging)
+  useEffect(() => {
+    if (pageLoading) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-      if (dragOffset < -threshold && activeIndex < PAGES.length - 1) {
-        setActiveTab(PAGES[activeIndex + 1]);
-      } else if (dragOffset > threshold && activeIndex > 0) {
-        setActiveTab(PAGES[activeIndex - 1]);
+    let ticking = false;
+
+    const update3DTransforms = () => {
+      if (!container) return;
+      const width = container.clientWidth;
+      if (width <= 0) return;
+
+      const progress = container.scrollLeft / width;
+      setScrollProgress(progress);
+
+      pageRefs.current.forEach((el, slideIdx) => {
+        if (!el) return;
+        const diff = slideIdx - progress;
+        const absDiff = Math.abs(diff);
+
+        // Dynamic 3D Y-axis tilt and smooth depth scaling
+        const rotateY = Math.max(-10, Math.min(10, diff * -8));
+        const scale = 1 - Math.min(0.04, absDiff * 0.035);
+        const origin = diff > 0.01 ? 'left center' : diff < -0.01 ? 'right center' : 'center center';
+
+        el.style.transform = `perspective(1200px) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+        el.style.transformOrigin = origin;
+      });
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          update3DTransforms();
+          ticking = false;
+        });
+        ticking = true;
       }
-    }
 
-    setIsDragging(false);
-    setDragOffset(0);
-    isLockedRef.current = null;
+      if (scrollDebounceTimerRef.current) {
+        clearTimeout(scrollDebounceTimerRef.current);
+      }
+      scrollDebounceTimerRef.current = setTimeout(() => {
+        checkInfiniteBoundary();
+      }, 60);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    update3DTransforms();
+
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (scrollDebounceTimerRef.current) clearTimeout(scrollDebounceTimerRef.current);
+    };
+  }, [pageLoading]);
+
+  // IntersectionObserver to synchronize activeTab with Navbar when user swipes horizontally
+  useEffect(() => {
+    if (pageLoading) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isInternalScrollRef.current) return;
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const pageName = entry.target.getAttribute('data-page');
+            if (pageName && PAGES.includes(pageName)) {
+              setActiveTab(pageName);
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.55,
+      }
+    );
+
+    pageRefs.current.forEach((el) => {
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, [pageLoading]);
+
+  // Navigate to primary page smoothly when Navbar tab is clicked
+  const handleNavClick = (pageName) => {
+    setActiveTab(pageName);
+    const primaryIndexMap = { home: 1, about: 2, contact: 3, hobbies: 4 };
+    const targetIdx = primaryIndexMap[pageName] ?? 1;
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      isInternalScrollRef.current = true;
+      const width = container.clientWidth;
+      if (width > 0) {
+        container.scrollTo({
+          left: width * targetIdx,
+          behavior: 'smooth',
+        });
+      }
+
+      setTimeout(() => {
+        isInternalScrollRef.current = false;
+      }, 450);
+    }
   };
 
-  // Handle Mouse Drag (for desktop)
+  // Liquid Inertial Coasting & Soft Magnetic Landing Engine
+  useEffect(() => {
+    if (pageLoading) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    let targetScrollLeft = container.scrollLeft;
+    let animFrameId = null;
+    let wheelTimeout = null;
+
+    const lerpToTarget = () => {
+      if (!container) return;
+      const current = container.scrollLeft;
+      const diff = targetScrollLeft - current;
+
+      if (Math.abs(diff) > 0.4) {
+        container.scrollLeft = current + diff * 0.12;
+        animFrameId = requestAnimationFrame(lerpToTarget);
+      } else {
+        container.scrollLeft = targetScrollLeft;
+        animFrameId = null;
+      }
+    };
+
+    const settleOnNearestPage = () => {
+      if (!container) return;
+      const width = container.clientWidth;
+      if (width <= 0) return;
+
+      const nearestIdx = Math.round(container.scrollLeft / width);
+      targetScrollLeft = nearestIdx * width;
+      if (!animFrameId) {
+        animFrameId = requestAnimationFrame(lerpToTarget);
+      }
+    };
+
+    const handleWheel = (e) => {
+      // Check if user is scrolling inside a vertical inner container
+      const target = e.target;
+      const isInnerScrollable = target.closest('.overflow-y-auto, .react-activity-calendar');
+
+      if (isInnerScrollable && isInnerScrollable !== container) {
+        const { scrollTop, scrollHeight, clientHeight } = isInnerScrollable;
+        const isScrollableVertically = scrollHeight > clientHeight + 4;
+        const isAtTop = scrollTop <= 2;
+        const isAtBottom = scrollTop + clientHeight >= scrollHeight - 4;
+
+        if (isScrollableVertically) {
+          if ((e.deltaY < 0 && !isAtTop) || (e.deltaY > 0 && !isAtBottom)) {
+            return; // Allow vertical scrolling inside current slide content
+          }
+        }
+      }
+
+      if (Math.abs(e.deltaY) > 0 || Math.abs(e.deltaX) > 0) {
+        e.preventDefault();
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        const width = container.clientWidth;
+
+        if (width > 0) {
+          targetScrollLeft = Math.max(0, Math.min(width * 5, targetScrollLeft + delta * 0.95));
+
+          if (!animFrameId) {
+            animFrameId = requestAnimationFrame(lerpToTarget);
+          }
+
+          if (wheelTimeout) clearTimeout(wheelTimeout);
+          wheelTimeout = setTimeout(() => {
+            settleOnNearestPage();
+          }, 140);
+        }
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      if (animFrameId) cancelAnimationFrame(animFrameId);
+      if (wheelTimeout) clearTimeout(wheelTimeout);
+    };
+  }, [pageLoading]);
+
+  // Keyboard Left & Right Arrow Navigation for Desktop
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const width = container.clientWidth;
+      if (width <= 0) return;
+
+      const currentSlideIdx = Math.round(container.scrollLeft / width);
+
+      if (e.key === 'ArrowRight') {
+        const nextIdx = (currentSlideIdx + 1) % SLIDES.length;
+        isInternalScrollRef.current = true;
+        container.scrollTo({ left: nextIdx * width, behavior: 'smooth' });
+        setTimeout(() => { isInternalScrollRef.current = false; }, 400);
+      } else if (e.key === 'ArrowLeft') {
+        const prevIdx = (currentSlideIdx - 1 + SLIDES.length) % SLIDES.length;
+        isInternalScrollRef.current = true;
+        container.scrollTo({ left: prevIdx * width, behavior: 'smooth' });
+        setTimeout(() => { isInternalScrollRef.current = false; }, 400);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Mouse Drag Swiping for Desktop
+  const isMouseDownRef = useRef(false);
+  const startXRef = useRef(0);
+  const scrollLeftRef = useRef(0);
+  const isDraggingRef = useRef(false);
+
   const handleMouseDown = (e) => {
     if (e.button !== 0) return;
-    startPosRef.current = { x: e.clientX, y: e.clientY };
-    isLockedRef.current = null;
-    setIsDragging(true);
-    setDragOffset(0);
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    isMouseDownRef.current = true;
+    isDraggingRef.current = false;
+    startXRef.current = e.pageX - container.offsetLeft;
+    scrollLeftRef.current = container.scrollLeft;
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging || !startPosRef.current) return;
-    const deltaX = e.clientX - startPosRef.current.x;
-    const deltaY = e.clientY - startPosRef.current.y;
-
-    if (!isLockedRef.current) {
-      if (Math.abs(deltaX) > 5 && Math.abs(deltaX) > Math.abs(deltaY)) {
-        isLockedRef.current = 'horizontal';
-      } else if (Math.abs(deltaY) > 5 && Math.abs(deltaY) > Math.abs(deltaX)) {
-        isLockedRef.current = 'vertical';
-      }
+    if (!isMouseDownRef.current) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - startXRef.current) * 1.5;
+    if (Math.abs(walk) > 5) {
+      isDraggingRef.current = true;
     }
-
-    if (isLockedRef.current === 'horizontal') {
-      let effectiveDelta = deltaX;
-      if ((activeIndex === 0 && deltaX > 0) || (activeIndex === PAGES.length - 1 && deltaX < 0)) {
-        effectiveDelta = deltaX * 0.3;
-      }
-      setDragOffset(effectiveDelta);
-    }
+    container.scrollLeft = scrollLeftRef.current - walk;
   };
 
-  const handleMouseUp = () => {
-    if (!isDragging) return;
-    if (isLockedRef.current === 'horizontal') {
-      const containerWidth = containerRef.current?.offsetWidth || window.innerWidth;
-      const threshold = Math.min(containerWidth * 0.15, 60);
+  const handleMouseUpOrLeave = () => {
+    if (!isMouseDownRef.current) return;
+    isMouseDownRef.current = false;
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-      if (dragOffset < -threshold && activeIndex < PAGES.length - 1) {
-        setActiveTab(PAGES[activeIndex + 1]);
-      } else if (dragOffset > threshold && activeIndex > 0) {
-        setActiveTab(PAGES[activeIndex - 1]);
-      }
-    }
+    // Mobile layout (<640px) uses native touch snap like before
+    if (window.innerWidth < 640) return;
 
-    setIsDragging(false);
-    setDragOffset(0);
-    isLockedRef.current = null;
-  };
+    const width = container.clientWidth;
+    if (width > 0 && isDraggingRef.current) {
+      const nearestIdx = Math.round(container.scrollLeft / width);
+      const targetX = nearestIdx * width;
+      const startX = container.scrollLeft;
+      let startTime = null;
 
-  // Handle Trackpad Horizontal Wheel Swiping
-  const handleWheel = (e) => {
-    if (Math.abs(e.deltaX) > 30 && Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      const now = Date.now();
-      if (now - lastWheelTimeRef.current > 400) {
-        if (e.deltaX > 30 && activeIndex < PAGES.length - 1) {
-          setActiveTab(PAGES[activeIndex + 1]);
-          lastWheelTimeRef.current = now;
-        } else if (e.deltaX < -30 && activeIndex > 0) {
-          setActiveTab(PAGES[activeIndex - 1]);
-          lastWheelTimeRef.current = now;
+      const animateLanding = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const elapsed = timestamp - startTime;
+        const duration = 380;
+        const progress = Math.min(1, elapsed / duration);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        container.scrollLeft = startX + (targetX - startX) * easeOut;
+
+        if (progress < 1) {
+          requestAnimationFrame(animateLanding);
         }
-      }
+      };
+
+      requestAnimationFrame(animateLanding);
+    }
+  };
+
+  // Glitch-Free 3D Perspective Tilt Transform Calculator (Responsive for Desktop & Mobile)
+  const getPageStyle = (pageIndex) => {
+    const diff = pageIndex - scrollProgress;
+    const absDiff = Math.abs(diff);
+
+    // Dynamic 3D Y-axis tilt and smooth depth scaling
+    const rotateY = Math.max(-10, Math.min(10, diff * -8));
+    const scale = 1 - Math.min(0.04, absDiff * 0.035);
+
+    // Anchor transformOrigin to adjacent page edge so slides stay contiguous without opening background gaps
+    const origin = diff > 0.01 ? 'left center' : diff < -0.01 ? 'right center' : 'center center';
+
+    return {
+      transform: `perspective(1200px) rotateY(${rotateY.toFixed(2)}deg) scale(${scale.toFixed(3)})`,
+      transformOrigin: origin,
+      WebkitBackfaceVisibility: 'hidden',
+      backfaceVisibility: 'hidden',
+      transformStyle: 'preserve-3d',
+      willChange: 'transform',
+    };
+  };
+
+  const renderPageContent = (pageName) => {
+    switch (pageName) {
+      case 'home':
+        return (
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full space-y-6 pb-12 pt-2">
+            <ProfileHeader />
+            <ProfileInfo />
+            <HomeAboutSection />
+            <ProjectsSection />
+            <TechStackPage />
+            <GithubActivity />
+            <RecentCommits />
+            <ConnectSection setActiveTab={handleNavClick} />
+          </div>
+        );
+      case 'about':
+        return (
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12 pt-4">
+            <AboutSection />
+          </div>
+        );
+      case 'contact':
+        return (
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12 pt-4">
+            <ContactSection setActiveTab={handleNavClick} />
+          </div>
+        );
+      case 'hobbies':
+        return (
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12 pt-4">
+            <HobbiesSection />
+          </div>
+        );
+      default:
+        return null;
     }
   };
 
@@ -190,70 +494,38 @@ export default function App() {
   }
 
   return (
-    <div className={`min-h-screen font-sans transition-colors duration-300 [overflow-x:clip] ${
+    <div className={`min-h-screen font-sans transition-colors duration-300 overflow-x-hidden ${
       isDark 
         ? 'bg-black text-white selection:bg-white selection:text-black' 
         : 'bg-white text-black selection:bg-zinc-900 selection:text-white'
     }`}>
       {/* Top Navbar Header */}
-      <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Navbar activeTab={activeTab} setActiveTab={handleNavClick} />
 
-      {/* Main Slider Container */}
+      {/* Infinite Horizontal Snap Page Container with Glitch-Free 3D Tilt */}
       <main 
-        ref={containerRef}
-        onWheel={handleWheel}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
+        ref={scrollContainerRef}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
-        className={`w-full [overflow-x:clip] relative touch-pan-y ${isDragging ? 'select-none cursor-grabbing' : ''}`}
+        onMouseUp={handleMouseUpOrLeave}
+        onMouseLeave={handleMouseUpOrLeave}
+        className={`snap-slider-container w-full h-[calc(100vh-4rem)] select-none cursor-grab active:cursor-grabbing border-0 p-0 m-0 outline-none ring-0 ${
+          isDark ? 'bg-black text-white' : 'bg-white text-black'
+        }`}
       >
-        <div 
-          className="flex flex-row w-[400%] h-full"
-          style={{
-            transform: `translateX(calc(-${activeIndex * 25}% + ${dragOffset}px))`,
-            transition: isDragging ? 'none' : 'transform 350ms cubic-bezier(0.25, 1, 0.5, 1)',
-          }}
-        >
-          {/* Page 0: Home */}
-          <div className="w-[25%] shrink-0 box-border">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full space-y-6 animate-fadeIn pb-12">
-              <ProfileHeader />
-              <ProfileInfo />
-              <HomeAboutSection />
-              <ProjectsSection />
-              <TechStackPage />
-              <GithubActivity />
-              <RecentCommits />
-              <ConnectSection setActiveTab={setActiveTab} />
-            </div>
+        {SLIDES.map((slide, slideIdx) => (
+          <div 
+            key={slide.id}
+            ref={(el) => (pageRefs.current[slideIdx] = el)}
+            data-page={slide.page}
+            style={getPageStyle(slideIdx)}
+            className={`snap-slider-page h-full overflow-y-auto overflow-x-hidden box-border border-0 p-0 m-0 outline-none ring-0 ${
+              isDark ? 'bg-black text-white' : 'bg-white text-black'
+            }`}
+          >
+            {renderPageContent(slide.page)}
           </div>
-
-          {/* Page 1: About */}
-          <div className="w-[25%] shrink-0 box-border">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12">
-              <AboutSection />
-            </div>
-          </div>
-
-          {/* Page 2: Contact */}
-          <div className="w-[25%] shrink-0 box-border">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12">
-              <ContactSection setActiveTab={setActiveTab} />
-            </div>
-          </div>
-
-          {/* Page 3: Hobbies */}
-          <div className="w-[25%] shrink-0 box-border">
-            <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full pb-12">
-              <HobbiesSection />
-            </div>
-          </div>
-        </div>
+        ))}
       </main>
     </div>
   );
