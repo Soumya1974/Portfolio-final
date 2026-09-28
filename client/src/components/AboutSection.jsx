@@ -5,7 +5,7 @@ const skills = [
   'React.js', 'Three.js / WebGL', 'Node.js', 'Express.js', 
   'MongoDB', 'Python', 'OpenCV', 'PaddleOCR', 
   'Socket.IO', 'Tailwind CSS', 'AWS S3', 'Zustand', 
-  'Cloudinary', 'JWT & OAuth', 'Blender', 'REST APIs'
+  'Cloudinary', 'JWT & OAuth', 'Blender', 'Git / GitHub', 'REST APIs'
 ];
 
 const journeyTimeline = [
