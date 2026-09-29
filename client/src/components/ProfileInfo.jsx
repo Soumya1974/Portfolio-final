@@ -7,14 +7,14 @@ export default function ProfileInfo() {
   const { isDark } = useTheme();
 
   return (
-    <div className="space-y-4 py-2 font-mono-code ">
+    <div className="space-y-4 py-2 font-mono-code">
       <div className="space-y-3 leading-relaxed text-sm sm:text-base">
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors duration-300 ${
             isDark ? 'text-white' : 'text-black'
           }`}>
-            Soumya ranjan sahoo
+            Soumya Ranjan Sahoo
             <span className='ml-2 text-[12px] font-normal text-zinc-500'>(He/Him)</span>
           </h1>
         </div>
