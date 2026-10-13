@@ -465,7 +465,7 @@ export default function App() {
             <RecentCommits />
             <GitHubPushChart />
             <ConnectSection setActiveTab={handleNavClick} />
-            <Footer />
+            {/* <Footer /> */}
           </div>
         );
       case 'about':
