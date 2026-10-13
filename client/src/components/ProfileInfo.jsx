@@ -14,7 +14,7 @@ export default function ProfileInfo() {
           <h1 className={`text-2xl sm:text-3xl font-bold tracking-tight transition-colors duration-300 ${
             isDark ? 'text-white' : 'text-black'
           }`}>
-            Soumya Ranjan Sahoo
+            Soumya
             <span className='ml-2 text-[12px] font-normal text-zinc-500'>(He/Him)</span>
           </h1>
         </div>
@@ -22,18 +22,18 @@ export default function ProfileInfo() {
         <p className={`transition-colors duration-300 font-sans ${
           isDark ? 'text-zinc-300' : 'text-zinc-700'
         }`}>
-          I build software with a focus on scalability, performance, and real-world impact. I also do 3D animation and content creation in my free time which is very rare, anyways combining technology and creativity to bring ideas to life.
+          I build software with a focus on scalability, performance, and real-world impact. I also do 3D animation and content creation in my free time.
         </p>
 
         <p className={`text-xs font-mono-code transition-colors duration-300 ${
           isDark ? 'text-zinc-500' : 'text-zinc-500'
         }`}>
-          Software Developer, 3D Animator, Farmer
+          Software Developer, 3D Animator
         </p>
       </div>
 
       {/* Replaced Stats Section */}
-      <StatsSection />
+      {/* <StatsSection /> */}
     </div>
   );
 }

@@ -3,7 +3,8 @@ import SocialLinks from './SocialLinks';
 import { useTheme } from '../ThemeContext';
 
 export default function YouTubeBanner() {
-  const canvasRef = useRef(null);
+  // const canvasRef = useRef(null);
+  const videoRef = useRef(null);
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [displayText, setDisplayText] = useState('');
   const { isDark } = useTheme();
@@ -65,7 +66,7 @@ export default function YouTubeBanner() {
     };
   }, [phraseIndex]);
 
-  // Matrix Binary 0 and 1 Rain Canvas (Theme responsive)
+  /* ---- COMMENTED OUT: Matrix Binary 0 and 1 Rain Canvas (Theme responsive) ----
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -128,13 +129,28 @@ export default function YouTubeBanner() {
       cancelAnimationFrame(animationFrameId);
     };
   }, [isDark]);
+  ---- END COMMENTED OUT ---- */
 
   return (
     <div className={`relative w-full h-32 sm:h-40 rounded-lg overflow-hidden border shadow-xs transition-colors duration-300 ${
       isDark ? 'bg-zinc-950 border-zinc-800' : 'bg-zinc-100 border-zinc-200'
     }`}>
-      {/* Falling Binary 0 & 1 Matrix Rain */}
+      {/* ---- COMMENTED OUT: Falling Binary 0 & 1 Matrix Rain ----
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
+      ---- END COMMENTED OUT ---- */}
+
+      {/* Pixelated Video Banner Background */}
+      <video
+        ref={videoRef}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        src="/banner/pixalated.mp4"
+        onEnded={(e) => { e.target.currentTime = 0; e.target.play(); }}
+      />
+
 
       {/* Glassmorphic overlay & text reveal */}
       <div className={`absolute inset-0 backdrop-blur-[1px] flex items-center justify-center p-4 text-center transition-colors duration-300 ${
@@ -157,3 +173,4 @@ export default function YouTubeBanner() {
     </div>
   );
 }
+

@@ -59,7 +59,7 @@ export default function StatsSection() {
       </div>
 
 
-      <div className={`p-3 sm:p-4 transition-all duration-300 flex items-center space-x-3 ${
+      {/* <div className={`p-3 sm:p-4 transition-all duration-300 flex items-center space-x-3 ${
         isDark 
           ? 'text-zinc-300' 
           : 'text-zinc-800'
@@ -81,7 +81,7 @@ export default function StatsSection() {
             201+ Commits
           </span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -12,6 +12,8 @@ import TechStackPage from './components/TechStackPage';
 import { useTheme } from './ThemeContext';
 import GithubActivity from './components/GithubActivity';
 import RecentCommits from './components/RecentCommits';
+import Footer from './components/Footer';
+import GitHubPushChart from './components/GitHubPushChart';
 
 // 6 Slides for Seamless Bi-Directional Infinite Looping:
 // [Hobbies-Clone, Home, About, Contact, Hobbies, Home-Clone]
@@ -436,13 +438,34 @@ export default function App() {
         return (
           <div className="max-w-3xl mx-auto px-4 sm:px-6 w-full space-y-6 pb-12 pt-2">
             <ProfileHeader />
-            <ProfileInfo />
-            <HomeAboutSection />
+            <div className="relative">
+              {/* Donut Ring - half-faded, low opacity, theme-responsive */}
+              {/* <div
+                className="pointer-events-none absolute z-0"
+                style={{
+                  width: '400px',
+                  height: '400px',
+                  top: '-40px',
+                  right: '-10px',
+                  borderRadius: '50%',
+                  border: `35px solid ${isDark ? 'rgba(255,255,255,0.045)' : 'rgba(0,0,0,0.035)'}`,
+                  transform: 'rotate(90deg)',
+                  maskImage: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 30%)',
+                  WebkitMaskImage: 'linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 30%)',
+                }}
+              /> */}
+              <div className="relative z-10">
+                <ProfileInfo />
+                <HomeAboutSection />
+              </div>
+            </div>
             <ProjectsSection />
             <TechStackPage />
             <GithubActivity />
             <RecentCommits />
+            <GitHubPushChart />
             <ConnectSection setActiveTab={handleNavClick} />
+            <Footer />
           </div>
         );
       case 'about':

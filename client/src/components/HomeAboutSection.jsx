@@ -20,9 +20,8 @@ export default function HomeAboutSection() {
         <p className={`text-sm sm:text-base leading-relaxed transition-colors duration-300 ${
           isDark ? 'text-zinc-300' : 'text-zinc-700'
         }`}>
-          I am a 2nd year MCA student and developer focused on building modern web applications, 
-          cloud infrastructure, and interactive 3D graphics. When I'm not writing code, I create 3D animations 
-          in Blender and solve data structures.
+          I am a second year mca student and developer focused on building modern web applications, 
+          cloud infrastructure, and interactive 3D graphics.
         </p>
 
         {/* Highlight Pills */}
