@@ -9,6 +9,18 @@ const BACKEND_URL =
     ? ''
     : 'https://server-portfolio-8pqs.onrender.com');
 
+
+const formatFollowerCount = (count) => {
+  if (count === null || count === undefined) return '0';
+  if (count > 999) {
+    return new Intl.NumberFormat('en', {
+      notation: 'compact',
+      maximumFractionDigits: 1,
+    }).format(count);
+  }
+  return count.toLocaleString();
+};
+
 export default function FollowButton() {
   const { isDark } = useTheme();
   const [followerCount, setFollowerCount] = useState(null);
@@ -70,7 +82,7 @@ export default function FollowButton() {
   }, []);
 
   const handleFollow = async () => {
-    // If already following or currently submitting, do nothing (users cannot unfollow)
+    
     if (isFollowing || isSubmitting) return;
 
     setIsSubmitting(true);
@@ -82,14 +94,14 @@ export default function FollowButton() {
         if (typeof data.count === 'number') {
           setFollowerCount(data.count);
         }
-        // ONLY mark as Following if backend actually succeeded
+        
         setIsFollowing(true);
       } else {
         throw new Error(data.error || 'Failed to follow');
       }
     } catch (err) {
       console.error('Error while following:', err.response?.data?.error || err.message);
-      // Do NOT set following state on failure - keep button as Follow
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +109,7 @@ export default function FollowButton() {
 
   return (
     <div className="flex items-center gap-2.5 sm:gap-3 font-mono-code text-xs sm:text-sm">
-      {/* Follow / Following Button */}
+      
       <button
         type="button"
         onClick={handleFollow}
@@ -139,13 +151,16 @@ export default function FollowButton() {
             : 'bg-zinc-50 border-zinc-200 text-zinc-600'
         }`}
       >
-        <span className={`font-semibold tracking-tight transition-colors duration-300 ${
-          isDark ? 'text-zinc-200' : 'text-zinc-900'
-        }`}>
+        <span
+          title={`${(followerCount ?? 0).toLocaleString()} ${followerCount === 1 ? 'follower' : 'followers'}`}
+          className={`font-semibold tracking-tight transition-colors duration-300 ${
+            isDark ? 'text-zinc-200' : 'text-zinc-900'
+          }`}
+        >
           {!hasLoaded && followerCount === null ? (
             <span className="inline-block w-6 h-3.5 animate-pulse bg-zinc-700/40 rounded-sm"></span>
           ) : (
-            (followerCount ?? 0).toLocaleString()
+            formatFollowerCount(followerCount)
           )}
         </span>
         <span className="text-[11px] sm:text-xs">
