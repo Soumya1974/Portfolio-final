@@ -3,6 +3,12 @@ import axios from 'axios';
 import { UserPlus, UserCheck, Users, Loader2, Info } from 'lucide-react';
 import { useTheme } from '../ThemeContext';
 
+const BACKEND_URL =
+  import.meta.env.VITE_API_URL ||
+  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? ''
+    : 'https://server-portfolio-8pqs.onrender.com');
+
 export default function FollowButton() {
   const { isDark } = useTheme();
   const [followerCount, setFollowerCount] = useState(null);
@@ -28,32 +34,26 @@ export default function FollowButton() {
     };
   }, [showTooltip]);
 
-  // Fetch initial follower count and status for this user's IP
+  // Fetch initial follower count and status from backend DB by IP
   useEffect(() => {
     let isMounted = true;
 
-    // Check localStorage cache for instant UI rendering
-    const cachedFollowing = localStorage.getItem('has_followed_soumya') === 'true';
-    if (cachedFollowing) {
-      setIsFollowing(true);
+    // Clean up any old localStorage key from previous attempts
+    try {
+      localStorage.removeItem('has_followed_soumya');
+    } catch {
+      // Ignore in case storage is restricted
     }
 
     const fetchFollowerStatus = async () => {
       try {
-        const { data } = await axios.get('/api/followers/status');
+        const { data } = await axios.get(`${BACKEND_URL}/api/followers/status`);
         if (isMounted && data.success) {
           setFollowerCount(typeof data.count === 'number' ? data.count : 0);
-          if (data.hasFollowed) {
-            setIsFollowing(true);
-            localStorage.setItem('has_followed_soumya', 'true');
-          } else {
-            setIsFollowing(false);
-            localStorage.removeItem('has_followed_soumya');
-          }
+          setIsFollowing(Boolean(data.hasFollowed));
         }
       } catch (err) {
         console.warn('Could not fetch follower status from server:', err.response?.data?.error || err.message);
-        // Fallback default count if server is offline or not yet connected
         if (isMounted && followerCount === null) {
           setFollowerCount(0);
         }
@@ -75,35 +75,21 @@ export default function FollowButton() {
 
     setIsSubmitting(true);
 
-    // Optimistic UI update
-    const previousCount = followerCount ?? 0;
-    setIsFollowing(true);
-    setFollowerCount(previousCount + 1);
-
     try {
-      const { data } = await axios.post('/api/followers');
+      const { data } = await axios.post(`${BACKEND_URL}/api/followers`);
 
-      if (data.success) {
+      if (data.success || data.alreadyFollowing) {
         if (typeof data.count === 'number') {
           setFollowerCount(data.count);
         }
+        // ONLY mark as Following if backend actually succeeded
         setIsFollowing(true);
-        localStorage.setItem('has_followed_soumya', 'true');
-      } else if (data.alreadyFollowing) {
-        if (typeof data.count === 'number') {
-          setFollowerCount(data.count);
-        }
-        setIsFollowing(true);
-        localStorage.setItem('has_followed_soumya', 'true');
       } else {
         throw new Error(data.error || 'Failed to follow');
       }
     } catch (err) {
       console.error('Error while following:', err.response?.data?.error || err.message);
-      // Revert optimistic update on failure
-      setIsFollowing(false);
-      setFollowerCount(previousCount);
-      localStorage.removeItem('has_followed_soumya');
+      // Do NOT set following state on failure - keep button as Follow
     } finally {
       setIsSubmitting(false);
     }
