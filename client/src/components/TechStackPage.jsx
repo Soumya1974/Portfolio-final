@@ -111,6 +111,8 @@ const timeline = [
     }
 ];
 
+console.log(timeline);
+
 export default function TechStackPage() {
     const [stackId, setStackId] = useState(1);
     const { isDark } = useTheme();
