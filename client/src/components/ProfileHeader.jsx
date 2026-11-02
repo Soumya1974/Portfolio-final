@@ -12,7 +12,7 @@ export default function ProfileHeader() {
       <YouTubeBanner />
 
       {/* Circular Avatar & Follower Count Row overlapping bottom of Banner */}
-      <div className="relative z-10 -mt-12 sm:-mt-16 ml-4 sm:ml-6 flex items-end gap-3 sm:gap-4 flex-wrap">
+      <div className="relative z-30 -mt-12 sm:-mt-16 ml-4 sm:ml-6 flex items-end gap-3 sm:gap-4 flex-wrap">
         <div className="relative inline-block flex-shrink-0">
           <div className={`w-28 h-28 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 shadow-md transition-all duration-300 hover:scale-105 ${
             isDark ? 'border-zinc-800 bg-black ring-4 ring-black' : 'border-zinc-200 bg-white ring-4 ring-white'
