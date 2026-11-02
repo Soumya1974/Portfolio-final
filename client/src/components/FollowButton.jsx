@@ -46,6 +46,9 @@ export default function FollowButton() {
           if (data.hasFollowed) {
             setIsFollowing(true);
             localStorage.setItem('has_followed_soumya', 'true');
+          } else {
+            setIsFollowing(false);
+            localStorage.removeItem('has_followed_soumya');
           }
         }
       } catch (err) {
@@ -76,7 +79,6 @@ export default function FollowButton() {
     const previousCount = followerCount ?? 0;
     setIsFollowing(true);
     setFollowerCount(previousCount + 1);
-    localStorage.setItem('has_followed_soumya', 'true');
 
     try {
       const { data } = await axios.post('/api/followers');
@@ -85,27 +87,23 @@ export default function FollowButton() {
         if (typeof data.count === 'number') {
           setFollowerCount(data.count);
         }
+        setIsFollowing(true);
+        localStorage.setItem('has_followed_soumya', 'true');
       } else if (data.alreadyFollowing) {
         if (typeof data.count === 'number') {
           setFollowerCount(data.count);
         }
+        setIsFollowing(true);
+        localStorage.setItem('has_followed_soumya', 'true');
       } else {
         throw new Error(data.error || 'Failed to follow');
       }
     } catch (err) {
       console.error('Error while following:', err.response?.data?.error || err.message);
-      // If server returned that this IP is already following
-      if (err.response?.data?.alreadyFollowing) {
-        if (typeof err.response.data.count === 'number') {
-          setFollowerCount(err.response.data.count);
-        }
-        setIsFollowing(true);
-        localStorage.setItem('has_followed_soumya', 'true');
-      } else if (!localStorage.getItem('has_followed_soumya')) {
-        // Revert optimistic update only if not previously cached
-        setIsFollowing(false);
-        setFollowerCount(previousCount);
-      }
+      // Revert optimistic update on failure
+      setIsFollowing(false);
+      setFollowerCount(previousCount);
+      localStorage.removeItem('has_followed_soumya');
     } finally {
       setIsSubmitting(false);
     }
