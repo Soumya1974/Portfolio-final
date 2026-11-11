@@ -129,7 +129,7 @@ export default function FollowButton() {
         {isSubmitting ? (
           <>
             <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            <span>Following...</span>
+            <span>Follow</span>
           </>
         ) : isFollowing ? (
           <>
