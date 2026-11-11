@@ -57,8 +57,8 @@ export default function Navbar({ activeTab, setActiveTab }) {
               </button>
             ))}
             <a
-              href="/Soumya_Ranjan_Sahoo_CV.pdf"
-              download="Soumya_Ranjan_Sahoo_CV.pdf"
+              href="/Soumya_Ranjan_Sahoo_Resume.pdf"
+              download="Soumya_Ranjan_Sahoo_Resume.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className={`transition-colors py-1 cursor-pointer flex items-center gap-1 ${
@@ -150,8 +150,8 @@ export default function Navbar({ activeTab, setActiveTab }) {
           ))}
 
           <a
-            href="/Soumya_Ranjan_Sahoo_CV.pdf"
-            download="Soumya_Ranjan_Sahoo_CV.pdf"
+            href="/Soumya_Ranjan_Sahoo_Resume.pdf"
+            download="Soumya_Ranjan_Sahoo_Resume.pdf"
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setMobileMenuOpen(false)}
