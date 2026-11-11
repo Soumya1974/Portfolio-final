@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import ProfileHeader from './components/ProfileHeader';
 import ProfileInfo from './components/ProfileInfo';
@@ -38,10 +38,27 @@ export default function App() {
   const pageRefs = useRef([]);
   const isInternalScrollRef = useRef(false);
   const isResettingRef = useRef(false);
+  const isInitializedRef = useRef(false);
   const scrollDebounceTimerRef = useRef(null);
   const targetScrollLeftRef = useRef(0);
 
-  // Initial page load timer
+  // Synchronously lock initial scroll position to Primary Home (Index 1) BEFORE first browser paint
+  useLayoutEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const width = container.clientWidth || window.innerWidth;
+    if (width > 0) {
+      container.classList.add('no-smooth-scroll');
+      container.style.scrollBehavior = 'auto';
+      const initialX = width * 1;
+      container.scrollLeft = initialX;
+      targetScrollLeftRef.current = initialX;
+      setScrollProgress(1);
+    }
+  }, []);
+
+  // Initial page load timer for splash screen
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoading(false);
@@ -49,20 +66,59 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Set initial scroll position to Primary Home (Index 1) on load
+  // When splash loading ends, ensure Home is locked and cleanly enable smooth user scrolling
   useEffect(() => {
-    if (pageLoading) return;
     const container = scrollContainerRef.current;
     if (!container) return;
 
-    const width = container.clientWidth;
+    const width = container.clientWidth || window.innerWidth;
     if (width > 0) {
       const initialX = width * 1;
       container.scrollLeft = initialX;
       targetScrollLeftRef.current = initialX;
       setScrollProgress(1);
     }
+
+    if (!pageLoading) {
+      // Re-enable smooth scrolling after home position has firmly settled
+      const timer = setTimeout(() => {
+        isInitializedRef.current = true;
+        if (container) {
+          container.classList.remove('no-smooth-scroll');
+          container.style.scrollBehavior = '';
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
   }, [pageLoading]);
+
+  // Responsive window resize to maintain exact page alignment
+  useEffect(() => {
+    const handleResize = () => {
+      const container = scrollContainerRef.current;
+      if (!container) return;
+      const width = container.clientWidth;
+      if (width <= 0) return;
+
+      const currentIdx = Math.round(container.scrollLeft / width);
+      const targetX = width * currentIdx;
+      container.classList.add('no-smooth-scroll');
+      container.style.scrollBehavior = 'auto';
+      container.scrollLeft = targetX;
+      targetScrollLeftRef.current = targetX;
+      setScrollProgress(currentIdx);
+
+      setTimeout(() => {
+        if (isInitializedRef.current && container) {
+          container.classList.remove('no-smooth-scroll');
+          container.style.scrollBehavior = '';
+        }
+      }, 50);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Trick: toggling overflow off/on for one frame cancels the browser's
   // native momentum/inertial scrolling, so it can't fight our manual
@@ -75,10 +131,10 @@ export default function App() {
     container.style.overflowX = prevOverflow;
   };
 
-  // Glitch-Free Infinite Boundary Teleporting (Only triggers after swipe settles)
+  // Glitch-Free Infinite Boundary Teleporting (Only triggers after swipe settles and after full initialization)
   const checkInfiniteBoundary = () => {
     const container = scrollContainerRef.current;
-    if (!container || isResettingRef.current) return;
+    if (!container || isResettingRef.current || !isInitializedRef.current) return;
     const width = container.clientWidth;
     if (width <= 0) return;
 
@@ -192,7 +248,7 @@ export default function App() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (isInternalScrollRef.current) return;
+        if (isInternalScrollRef.current || !isInitializedRef.current) return;
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const pageName = entry.target.getAttribute('data-page');
@@ -491,52 +547,63 @@ export default function App() {
     }
   };
 
-  if (pageLoading) {
-    return (
-      <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-colors duration-300 ${
-        isDark ? 'bg-black text-white' : 'bg-white text-black'
-      }`}>
-        <style>{`
-          @keyframes waveBounce {
-            0%, 60%, 100% {
-              transform: translateY(0);
-              opacity: 0.3;
-            }
-            30% {
-              transform: translateY(-10px);
-              opacity: 1;
-            }
-          }
-          .wave-dot-1 { animation: waveBounce 1.2s infinite ease-in-out 0s; }
-          .wave-dot-2 { animation: waveBounce 1.2s infinite ease-in-out 0.2s; }
-          .wave-dot-3 { animation: waveBounce 1.2s infinite ease-in-out 0.4s; }
-        `}</style>
-        <div className="flex items-center space-x-2.5">
-          <div className={`w-2.5 h-2.5 rounded-full wave-dot-1 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
-          <div className={`w-2.5 h-2.5 rounded-full wave-dot-2 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
-          <div className={`w-2.5 h-2.5 rounded-full wave-dot-3 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className={`min-h-screen font-sans transition-colors duration-300 overflow-x-hidden ${
       isDark 
         ? 'bg-black text-white selection:bg-white selection:text-black' 
         : 'bg-white text-black selection:bg-zinc-900 selection:text-white'
     }`}>
+      {/* Splash Screen Loading Overlay */}
+      {pageLoading && (
+        <div className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-300 ${
+          isDark ? 'bg-black text-white' : 'bg-white text-black'
+        }`}>
+          <style>{`
+            @keyframes waveBounce {
+              0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.3;
+              }
+              30% {
+                transform: translateY(-10px);
+                opacity: 1;
+              }
+            }
+            .wave-dot-1 { animation: waveBounce 1.2s infinite ease-in-out 0s; }
+            .wave-dot-2 { animation: waveBounce 1.2s infinite ease-in-out 0.2s; }
+            .wave-dot-3 { animation: waveBounce 1.2s infinite ease-in-out 0.4s; }
+          `}</style>
+          <div className="flex items-center space-x-2.5">
+            <div className={`w-2.5 h-2.5 rounded-full wave-dot-1 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
+            <div className={`w-2.5 h-2.5 rounded-full wave-dot-2 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
+            <div className={`w-2.5 h-2.5 rounded-full wave-dot-3 ${isDark ? 'bg-white' : 'bg-black'}`}></div>
+          </div>
+        </div>
+      )}
+
       {/* Top Navbar Header */}
       <Navbar activeTab={activeTab} setActiveTab={handleNavClick} />
 
       {/* Infinite Horizontal Snap Page Container with Glitch-Free 3D Tilt */}
       <main 
-        ref={scrollContainerRef}
+        ref={(el) => {
+          scrollContainerRef.current = el;
+          if (el && !isInitializedRef.current) {
+            const width = el.clientWidth || window.innerWidth;
+            if (width > 0) {
+              el.classList.add('no-smooth-scroll');
+              el.style.scrollBehavior = 'auto';
+              const targetX = width * 1;
+              el.scrollLeft = targetX;
+              targetScrollLeftRef.current = targetX;
+            }
+          }
+        }}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUpOrLeave}
         onMouseLeave={handleMouseUpOrLeave}
-        className={`snap-slider-container w-full h-[calc(100vh-4rem)] select-none cursor-grab active:cursor-grabbing border-0 p-0 m-0 outline-none ring-0 ${
+        className={`snap-slider-container no-smooth-scroll w-full h-[calc(100vh-4rem)] select-none cursor-grab active:cursor-grabbing border-0 p-0 m-0 outline-none ring-0 ${
           isDark ? 'bg-black text-white' : 'bg-white text-black'
         }`}
       >

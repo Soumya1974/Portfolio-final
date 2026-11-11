@@ -76,6 +76,7 @@ body {
 /* Instant teleport override class */
 .snap-slider-container.no-smooth-scroll {
   scroll-behavior: auto !important;
+  scroll-snap-type: none !important;
 }
 
 /* Mobile View (< 640px): Native Instagram-Style Touch Snap */
