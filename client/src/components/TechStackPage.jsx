@@ -7,11 +7,11 @@ const fieldOptions = [
         title: 'All',
         code: 'ALL',
         languages: [
+            { name: 'TypeScript', code: 'TS', type: 'Language' },
             { name: 'JavaScript', code: 'JS', type: 'Language' },
-            { name: 'Node.js', code: 'NODE', type: 'Runtime' },
-            { name: 'Python', code: 'PY', type: 'Language' },
+            { name: 'C++', code: 'C++', type: 'Language' },
+            { name: 'SQL', code: 'SQL', type: 'Language' },
             { name: 'C Language', code: 'C', type: 'Language' },
-            { name: 'Java', code: 'JAVA', type: 'Language' },
             { name: 'HTML5', code: 'HTML', type: 'Markup' },
             { name: 'CSS3', code: 'CSS', type: 'Style' },
             { name: 'Tailwind CSS', code: 'TW', type: 'Framework' },
@@ -32,13 +32,13 @@ const fieldOptions = [
         title: 'Languages',
         code: 'LANG',
         languages: [
+            { name: 'TypeScript', code: 'TS', type: 'Language' },
             { name: 'JavaScript', code: 'JS', type: 'Language' },
-            { name: 'Python', code: 'PY', type: 'Language' },
+            { name: 'C++', code: 'C++', type: 'Language' },
+            { name: 'SQL', code: 'SQL', type: 'Language' },
             { name: 'C Language', code: 'C', type: 'Language' },
-            { name: 'Java', code: 'JAVA', type: 'Language' },
             { name: 'HTML5', code: 'HTML', type: 'Markup' },
             { name: 'CSS3', code: 'CSS', type: 'Style' },
-            { name: 'C++', code: 'C++', type: 'Language' },
         ],
         concepts: ['OOP Principles', 'Promises & Async', 'Arrays & Trees', 'Data Structures', 'ES6+ Syntax', 'DOM Logic'],
     },
@@ -112,7 +112,7 @@ const timeline = [
 ];
 
 export default function TechStackPage() {
-    const [stackId, setStackId] = useState(1);
+    const [stackId, setStackId] = useState(2);
     const { isDark } = useTheme();
 
     const active = fieldOptions.find(f => f.id === stackId) || fieldOptions[0];
@@ -197,7 +197,7 @@ export default function TechStackPage() {
                 {/* Left Side: Learning Journey & Concepts (5 Cols) */}
                 <div className="lg:col-span-5 space-y-4">
                     {/* Journey / Milestone Box */}
-                    <div key={`timeline-${stackId}`} className={`p-4 sm:p-5 rounded-xl border shadow-xs space-y-3 animate-tech-fade transition-colors duration-300 ${
+                    <div key={`timeline-${stackId}`} className={`p-4 sm:p-5 rounded-xl border hidden sm:flex shadow-xs space-y-3 animate-tech-fade transition-colors duration-300 ${
                         isDark ? 'bg-zinc-950 text-white border-zinc-800' : 'bg-gray-50 text-black border-gray-200'
                     }`}>
                         <div>
@@ -211,7 +211,7 @@ export default function TechStackPage() {
                     </div>
 
                     {/* Core Concepts */}
-                    <div key={`concepts-${stackId}`} className={`p-4 rounded-xl border space-y-3 animate-tech-fade transition-colors duration-300 ${
+                    <div key={`concepts-${stackId}`} className={`p-4 rounded-xl border hidden sm:flex space-y-3 animate-tech-fade transition-colors duration-300 ${
                         isDark ? 'border-zinc-800 bg-zinc-950' : 'border-zinc-200 bg-white'
                     }`}>
                         <div className="flex flex-wrap gap-1.5">

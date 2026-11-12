@@ -26,21 +26,21 @@ export default function HomeAboutSection() {
 
         {/* Highlight Pills */}
         <div className="flex flex-wrap gap-2 pt-1 font-mono-code text-xs">
-          <span className={`px-2.5 py-1 transition-colors ${
+          <span className={`px-2.5 py-1 transition-colors border rounded-md ${
             isDark 
               ? 'border-zinc-800' 
               : 'border-zinc-200'
           }`}>
             Full Stack Web
           </span>
-          <span className={`px-2.5 py-1 transition-colors ${
+          <span className={`px-2.5 py-1 transition-colors border rounded-md ${
             isDark 
               ? 'border-zinc-800' 
               : 'border-zinc-200'
           }`}>
             3D Graphics & Blender
           </span>
-          <span className={`px-2.5 py-1 transition-colors ${
+          <span className={`px-2.5 py-1 transition-colors border rounded-md ${
             isDark 
               ? 'border-zinc-800' 
               : 'border-zinc-200'
