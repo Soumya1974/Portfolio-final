@@ -12,16 +12,17 @@ export default function YouTubeBanner() {
   // Dynamic time-based greeting calculation for 1st phrase
   const getGreeting = () => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return 'Good morning, Soumya this side.';
-    if (hour >= 12 && hour < 17) return 'Good afternoon, Soumya this side.';
-    if (hour >= 17 && hour < 22) return 'Good evening, Soumya this side.';
-    return 'Good night, Soumya this side.';
+    if (hour >= 5 && hour < 12) return 'Morning, Soumya this side.';
+    if (hour >= 12 && hour < 17) return 'Afternoon, Soumya this side.';
+    if (hour >= 17 && hour < 22) return 'Evening, Soumya this side.';
+    return 'Night, Soumya this side.';
   };
 
   const phrases = [
     getGreeting(),
     "Let's connect.",
-    "Building Constant."
+    "Swipe sideways!",
+    "Building Constant"
   ];
 
   const targetText = phrases[phraseIndex];
