@@ -5,10 +5,11 @@ import { useTheme } from '../ThemeContext';
 
 const BACKEND_URL =
   import.meta.env.VITE_API_URL ||
-  (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  (typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+   window.location.hostname === '127.0.0.1')
     ? ''
-    : 'https://server-portfolio-8pqs.onrender.com');
-
+    : 'https://soumyaa.in');
 
 const formatFollowerCount = (count) => {
   if (count === null || count === undefined) return '0';
